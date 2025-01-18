@@ -28,12 +28,17 @@ jcool = 0
 ymom = 0
 dcool = 0
 xmom = 0
+triggers = 1
 slashc = 0
 sldammage = 1
+ftc = 0
 level = 0
+ft = 1
 max_soul = 100
 soul_gain = 1
 invulnrability = 0
+tutorialfont = pygame.font.SysFont(None,40)
+
 soul = 100
 jumps = 0
 s1f = True
@@ -64,10 +69,14 @@ fiwall = pygame.Rect(6000,-1400,50,1100)
 soulbar = pygame.Rect(30,50,100,20)
 secret = pygame.Rect(3200,0,50,50)
 slash = movable(0,0,20,40)
-ifloort = pygame.Rect(0,1000,2000,50)
-ibackwall = pygame.Rect(0,0,50,1000)
-objects = [ibackwall]
-tobjects = [ifloort]
+ifloort = pygame.Rect(0,1000,3000,50)
+ibackwall = pygame.Rect(0,400,50,600)
+iceiling = pygame.Rect(0,400,2000,50)
+ifrontwall = pygame.Rect(3000,600,50,400)
+ifloort2 = pygame.Rect(3000,600,1000,50)
+ibackwall2 = pygame.Rect(2000,0,50,600)
+objects = [ibackwall,iceiling,ifrontwall,ibackwall2]
+tobjects = [ifloort,ifloort2]
 enemies = []
 noncols = []
 
@@ -84,6 +93,19 @@ while run:
 
     pygame.draw.circle(screen,(255,0,0),player.center,40)
 
+    pygame.draw.rect(screen,(200,200,200),soulbar,soul)
+    if s1f == True:
+        pygame.draw.rect(screen,(150,150,150),secret)
+    if slashc > 150:
+        slash.hidden = False
+        if facing == 1:
+            slash.x=player.right+15
+        else:
+            slash.x=player.left-30
+        slash.y = yposition
+        pygame.draw.rect(screen,(0,0,0),slash)
+    else:
+        slash.hidden = True
     if level == 1:
         if not floort in tobjects:
             objects.append[backboard,roof,fwall,bwall,plat1,plat2,plat3,plat4,fiwall]
@@ -105,21 +127,9 @@ while run:
         pygame.draw.rect(screen,(0,0,0),tplat4)
         pygame.draw.rect(screen,(0,0,0),floort2)
         pygame.draw.rect(screen,(0,0,0),fiwall)
-        pygame.draw.rect(screen,(200,200,200),soulbar,soul)
         pygame.draw.rect(screen,(20,20,20),invis_secret)
         pygame.draw.rect(screen,(20,20,20),invis_sfloort)
-        if s1f == True:
-            pygame.draw.rect(screen,(150,150,150),secret)
-        if slashc > 150:
-            slash.hidden = False
-            if facing == 1:
-                slash.x=player.right+15
-            else:
-                slash.x=player.left-30
-            slash.y = yposition
-            pygame.draw.rect(screen,(0,0,0),slash)
-        else:
-            slash.hidden = True
+        
     
 #        objects.clear
 #        tobjects.clear
@@ -127,6 +137,26 @@ while run:
     elif level == 0:
         pygame.draw.rect(screen,(0,0,0),ifloort)
         pygame.draw.rect(screen,(0,0,0),ibackwall)
+        pygame.draw.rect(screen,(0,0,0),iceiling)
+        pygame.draw.rect(screen,(0,0,0),ifrontwall)
+        pygame.draw.rect(screen,(0,0,0),ifloort2)
+        pygame.draw.rect(screen,(0,0,0),ibackwall2)
+        if ft < 255 and not ibackwall.centerx < -1000:    
+            text = tutorialfont.render('A and D to move',True,(ft,ft,ft),(255,255,255))
+            screen.blit(text,(900,200))
+            if ftc < 1:
+                ft += 1
+                ftc = 8
+        if ibackwall.centerx < -1000:
+            if triggers > 0:
+                triggers = 0
+                ft = 0
+            if ft < 255:    
+                text2 = tutorialfont.render('space to jump',True,(ft,ft,ft),(255,255,255))
+                screen.blit(text2,(900,200))
+                if ftc < 1:
+                    ft += 1
+                    ftc = 8
 
 
 
@@ -283,7 +313,7 @@ while run:
             soul_gain+=1
             s1f = False
     
-    
+    ftc-=1
     jcool-=1
     soulc-=1
     slashc-=1
