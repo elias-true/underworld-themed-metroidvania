@@ -28,12 +28,18 @@ jcool = 0
 ymom = 0
 dcool = 0
 xmom = 0
-triggers = 1
+triggert1 = 1
+triggert2 = 1
+triggert3 = 1
 slashc = 0
 sldammage = 1
 ftc = 0
 level = 0
-ft = 1
+ft1 = 1
+ft2 = 1
+ft3 = 1
+ft4 = 1
+ft5 = 1
 max_soul = 100
 soul_gain = 1
 invulnrability = 0
@@ -72,11 +78,15 @@ slash = movable(0,0,20,40)
 ifloort = pygame.Rect(0,1000,3000,50)
 ibackwall = pygame.Rect(0,400,50,600)
 iceiling = pygame.Rect(0,400,2000,50)
-ifrontwall = pygame.Rect(3000,600,50,400)
-ifloort2 = pygame.Rect(3000,600,1000,50)
+ifrontwall = pygame.Rect(3000,700,50,400)
+ifloort2 = pygame.Rect(3000,700,1000,50)
 ibackwall2 = pygame.Rect(2000,0,50,600)
-objects = [ibackwall,iceiling,ifrontwall,ibackwall2]
-tobjects = [ifloort,ifloort2]
+idjtest = pygame.Rect(4000,100,50,600)
+idjwalk = pygame.Rect(4000,100,1000,50)
+idjwalkceiling = pygame.Rect(4000,-100,2000,50)
+idashtest = pygame.Rect(5300,100,1500,50)
+objects = [ibackwall,iceiling,ifrontwall,ibackwall2,idjtest,idjwalkceiling]
+tobjects = [ifloort,ifloort2,idjwalk,idashtest]
 enemies = []
 noncols = []
 
@@ -107,10 +117,11 @@ while run:
     else:
         slash.hidden = True
     if level == 1:
-        if not floort in tobjects:
-            objects.append[backboard,roof,fwall,bwall,plat1,plat2,plat3,plat4,fiwall]
-            tobjects.append[floort,tplat1,tplat2,tplat3,tplat4,floort2,invis_sfloort]
-            enemies.append[enemy1,enemy2]
+        if len(objects) == 0:
+            objects = [backboard,roof,fwall,bwall,plat1,plat2,plat3,plat4,fiwall]
+            tobjects = [floort,tplat1,tplat2,tplat3,tplat4,floort2,invis_sfloort]
+            enemies = [enemy1,enemy2]
+            noncols = [invis_secret,secret]
         
         pygame.draw.rect(screen,(0,0,0),floort)
         pygame.draw.rect(screen,(0,0,0),backboard)
@@ -141,22 +152,57 @@ while run:
         pygame.draw.rect(screen,(0,0,0),ifrontwall)
         pygame.draw.rect(screen,(0,0,0),ifloort2)
         pygame.draw.rect(screen,(0,0,0),ibackwall2)
-        if ft < 255 and not ibackwall.centerx < -1000:    
-            text = tutorialfont.render('A and D to move',True,(ft,ft,ft),(255,255,255))
+        pygame.draw.rect(screen,(0,0,0),idjtest)
+        pygame.draw.rect(screen,(0,0,0),idjwalk)
+        pygame.draw.rect(screen,(0,0,0),idjwalkceiling)
+        pygame.draw.rect(screen,(0,0,0),idashtest)
+        if ft1 < 255 and not ibackwall.centerx < -1000:    
+            text = tutorialfont.render('A and D to move',True,(ft1,ft1,ft1),(255,255,255))
             screen.blit(text,(900,200))
             if ftc < 1:
-                ft += 1
-                ftc = 8
+                ft1 += 1
+                ftc = 6
         if ibackwall.centerx < -1000:
-            if triggers > 0:
-                triggers = 0
-                ft = 0
-            if ft < 255:    
-                text2 = tutorialfont.render('space to jump',True,(ft,ft,ft),(255,255,255))
-                screen.blit(text2,(900,200))
+            if triggert1 > 0:
+                triggert1 = 0
+            if ft2 < 255:    
+                text = tutorialfont.render('space to jump',True,(ft2,ft2,ft2),(255,255,255))
+                screen.blit(text,(900,200))
                 if ftc < 1:
-                    ft += 1
-                    ftc = 8
+                    ft2 += 1
+                    ftc = 6
+            if ibackwall.centerx < -2500:
+                if triggert2 > 0:
+                    triggert2 = 0
+                if ft3 < 255:    
+                    text = tutorialfont.render('you can preform a double jump at the cost of soul(the grey bar)',True,(ft3,ft3,ft3),(255,255,255))
+                    screen.blit(text,(900,200))
+                    if ftc < 1:
+                        ft3 += 1
+                        ftc = 6
+            if ibackwall.centerx < -3000:
+                if triggert3 > 0:
+                    triggert3 = 0
+                if ft4 < 255:   
+                    text = tutorialfont.render('q to dash(costs soul)',True,(ft4,ft4,ft4),(255,255,255))
+                    screen.blit(text,(900,200))
+                    if ftc < 1:
+                        ft4 += 1
+                        ftc = 6
+                if ibackwall.centerx < -5500:
+                    if triggert3 > 0:
+                        triggert3 = 0
+                    if ft5 < 255:   
+                        text = tutorialfont.render('e to hit',True,(ft5,ft5,ft5),(255,255,255))
+                        screen.blit(text,(900,200))
+                        if ftc < 1:
+                            ft5 += 1
+                            ftc = 4
+                    if ibackwall.centerx < -5800:
+                        objects.clear()
+                        tobjects.clear()
+                        level = 1
+
 
 
 
@@ -247,9 +293,9 @@ while run:
 
     if key[pygame.K_q] == True and soul > 40 and dcool < 1:
         if facing == 0:
-            xmom = 12
+            xmom = 13
         if facing == 1:
-            xmom = -12
+            xmom = -13
         soul -= 40
         dcool = 100
     if not xmom == 0:
