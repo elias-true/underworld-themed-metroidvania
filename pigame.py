@@ -51,7 +51,7 @@ s1f = True
 soulc = 0
 xposition = 900
 yposition = 500
-player = pygame.Rect(xposition,yposition,100,40)
+player = pygame.Rect(xposition,yposition,30,40)
 enemy1 = movable(900,800,50,100)
 enemy2 = movable(2300,390,50,100)
 #map instanciacion
@@ -254,28 +254,27 @@ while run:
 
     def moveObjsX(objectsList,x):
         l=0
-        if col() == False:
-            while l < len(objectsList):
-                objectsList[l].move_ip(x,0)
-                l+=1
-        else:
+        while l < len(objectsList):
+            objectsList[l].move_ip(x,0)
+            l+=1
+        if col() == True:
             l = 0
             while l < len(objectsList):
-                objectsList[l].move_ip(-x,0)
+                objectsList[l].move_ip(-2*x,0)
                 l+=1
 
     key = pygame.key.get_pressed()
     if key[pygame.K_a] == True:
-        screen.blit(player_left_image,(900,500))
+        screen.blit(player_left_image,(900,480))
         moveObjsX(objects + tobjects + enemies + noncols,1)
         facing = 0
 
     elif key[pygame.K_d] == True:
-        screen.blit(player_right_image,(900,500))
+        screen.blit(player_right_image,(900,480))
         moveObjsX(objects + tobjects + enemies + noncols,-1)
         facing = 1
     else:
-        screen.blit(player_front_image,(900,500))
+        screen.blit(player_front_image,(900,480))
     if key[pygame.K_e] == True and slashc < 1:
         slashc = 200
 
