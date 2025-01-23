@@ -15,6 +15,7 @@ class movable(pygame.Rect):
     health = 4
     invulnrabilityc = 0
     hidden = False
+    ensxm = 0
     
     def move_ip(self,deltaX:float,deltaY:float):
         self.tx = self.tx+deltaX
@@ -330,10 +331,11 @@ while run:
         if anEnemy.health > 0:
             pygame.draw.rect(screen,(255,0,0),anEnemy)
             if xposition > anEnemy.centerx - 400 and xposition < anEnemy.centerx + 500 and not anEnemy.colliderect(player):
-                if anEnemy.centerx<player.left:
-                    anEnemy.move_ip(.5,0)
-                else:
-                    anEnemy.move_ip(-.5,0)
+                if anEnemy.ensxm == 0:
+                    if anEnemy.centerx<player.left:
+                        anEnemy.move_ip(.5,0)
+                    else:
+                        anEnemy.move_ip(-.5,0)
             cold = 0
             for atobject in tobjects:
                 if not anEnemy.colliderect(atobject):
@@ -350,10 +352,15 @@ while run:
                 anEnemy.health-=sldammage
                 anEnemy.invulnrabilityc=50
                 if xposition < anEnemy.centerx:
-                    anEnemy.move_ip(8,0)
+                    anEnemy.ensxm += 11
                 else:
-                    anEnemy.move_ip(-8,0)
+                    anEnemy.ensxm -= 11
             anEnemy.invulnrabilityc-=1
+            if anEnemy.ensxm>0:
+                anEnemy.ensxm-=1
+            elif anEnemy.ensxm<0:
+                anEnemy.ensxm+=1
+            anEnemy.move_ip(anEnemy.ensxm,0)
         else:
             enemies.remove(anEnemy)
 
