@@ -51,7 +51,7 @@ s1f = True
 soulc = 0
 xposition = 900
 yposition = 500
-player = pygame.Rect(xposition,yposition,50,50)
+player = pygame.Rect(xposition,yposition,100,40)
 enemy1 = movable(900,800,50,100)
 enemy2 = movable(2300,390,50,100)
 #map instanciacion
@@ -90,6 +90,10 @@ tobjects = [ifloort,ifloort2,idjwalk,idashtest]
 enemies = []
 noncols = []
 
+player_front_image = pygame.image.load("player_front.gif")
+player_right_image = pygame.image.load("player_right.gif")
+player_left_image = pygame.transform.flip(player_right_image,True,False)
+
 run = True
 
 
@@ -101,7 +105,8 @@ while run:
 
     screen.fill((255,255,255))
 
-    pygame.draw.circle(screen,(255,0,0),player.center,40)
+    #pygame.draw.circle(screen,(255,0,0),player.center,40)
+    
 
     pygame.draw.rect(screen,(200,200,200),soulbar,soul)
     if s1f == True:
@@ -261,14 +266,16 @@ while run:
 
     key = pygame.key.get_pressed()
     if key[pygame.K_a] == True:
-        #xposition=xposition-.1
+        screen.blit(player_left_image,(900,500))
         moveObjsX(objects + tobjects + enemies + noncols,1)
         facing = 0
 
-    if key[pygame.K_d] == True:
-        #xposition=xposition+.1
+    elif key[pygame.K_d] == True:
+        screen.blit(player_right_image,(900,500))
         moveObjsX(objects + tobjects + enemies + noncols,-1)
         facing = 1
+    else:
+        screen.blit(player_front_image,(900,500))
     if key[pygame.K_e] == True and slashc < 1:
         slashc = 200
 
