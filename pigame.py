@@ -1,6 +1,7 @@
 #import pprint
 import pygame
 pygame.init()
+import time as timekeep
 
 Screen_Hight = 1000
 Screen_width = 1800
@@ -8,8 +9,10 @@ screen = pygame.display.set_mode((Screen_width,Screen_Hight))
 
 class movable(pygame.Rect):
     "these are objects that can be moved and destroyed"
-    def __init__(self,top,back,width,height):
-        super().__init__(top,back,width,height)
+    def __init__(self,back,top,width,height):
+        self.inittop = top
+        self.initback = back
+        super().__init__(back,top,width,height)
         self.tx = back
         self.ty = top
     health = 4
@@ -17,20 +20,36 @@ class movable(pygame.Rect):
     hidden = False
     ensxm = 0
     cooldown = 0
+    initback = None
+    inittop = None
     
     def move_ip(self,deltaX:float,deltaY:float):
         self.tx = self.tx+deltaX
         self.ty = self.ty+deltaY
         selfAsRect = super()
         selfAsRect.move_ip(round(self.tx)-selfAsRect.x,round(self.ty)-selfAsRect.y)
-        print("moved to "+str(self.tx)+","+str(self.ty))
+#d        print("moved to "+str(self.tx)+","+str(self.ty))
 
+    def move(self,X:float,Y:float):
+        self.tx = X
+        self.ty = Y
+        selfAsRect = super()
+        selfAsRect.move(round(X),round(Y))
+
+    def resetInitialPosition(self):
+        self.tx = self.initback
+        self.ty = self.inittop
+        self.move(self.tx,self.ty)
 
 jcool = 0
+boss = 0
 ymom = 0
 dcool = 0
 xmom = 0
 triggert1 = 1
+timec = 0
+sli = 50
+time = 0
 triggert2 = 1
 triggert3 = 1
 dashblock = False
@@ -39,6 +58,7 @@ sldammage = 1
 dash = 12
 ftc = 0
 level = 0
+levsave = 0
 ft1 = 1
 ft2 = 1
 ft3 = 1
@@ -50,49 +70,64 @@ cash = 0
 invulnrability = 0
 tutorialfont = pygame.font.SysFont(None,40)
 
+def resetlevel(objects,tobjects):
+    for anobject in tobjects + objects:
+        anobject.resetInitialPosition()
+
 soul = 100
 jumps = 0
 s1f = True
 soulc = 0
 xposition = 900
 yposition = 500
-player = pygame.Rect(xposition,yposition - 20,30,60)
-enemy1 = movable(800,1300,50,100)
-enemy2 = movable(100,2500,50,100)
-enemyprojectile = movable(900,1500,50,100)
+player = movable(xposition,yposition - 20,30,60)
+enemy1 = movable(1300,800,50,100)
+enemy2 = movable(2500,100,50,100)
+enemy3 = movable(3400,-400,50,100)
+enemyprojectile = movable(1500,900,50,100)
+enemyprojectile2 = movable(3700,-400,50,100)
 #map instanciacion
-floort = pygame.Rect(-500,980,3500,20)
-sbackboard = pygame.Rect(-500,0,500,1100)
-backboard = pygame.Rect(-500,0,50,1100)
-roof = pygame.Rect(0,0,2000,50)
-fwall = pygame.Rect(3000,200,50,1400)
-invis_secret = pygame.Rect(3000,-300,500,600)
-invis_sfloort = pygame.Rect(3000,200,500,50)
-bwall = pygame.Rect(2000,-600,50,800)
-plat1 = pygame.Rect(2000,800,150,50)
-tplat1 = pygame.Rect(2000,795,150,5)
-plat2 = pygame.Rect(2200,500,150,50)
-tplat2 = pygame.Rect(2200,495,150,5)
-plat3 = pygame.Rect(2400,200,150,50)
-tplat3 = pygame.Rect(2400,195,150,5)
-plat4 = pygame.Rect(2600,-100,150,50)
-tplat4 = pygame.Rect(2600,-105,150,5)
-floort2 = pygame.Rect(3000,-300,3000,50)
-fiwall = pygame.Rect(6000,-1400,50,1100)
-soulbar = pygame.Rect(30,50,100,20)
-secret = pygame.Rect(3200,130,50,50)
-dashup = pygame.Rect(-200,900,50,50)
+floort = movable(-500,980,3500,20)
+sbackboard = movable(-500,0,500,1100)
+backboard = movable(-500,0,50,1100)
+roof = movable(0,0,2000,50)
+fwall = movable(3000,200,50,1400)
+invis_secret = movable(3000,-300,500,600)
+invis_sfloort = movable(3000,200,500,50)
+bwall = movable(2000,-600,50,800)
+plat1 = movable(2000,800,150,50)
+tplat1 = movable(2000,795,150,5)
+plat2 = movable(2200,500,150,50)
+tplat2 = movable(2200,495,150,5)
+plat3 = movable(2400,200,150,50)
+tplat3 = movable(2400,195,150,5)
+plat4 = movable(2600,-100,150,50)
+tplat4 = movable(2600,-105,150,5)
+floort2 = movable(3000,-300,3000,50)
+fiwall = movable(6000,-1400,50,1100)
+soulbar = movable(30,50,100,20)
+timebar = movable(30,100,100,20)
+secret = movable(3200,130,50,50)
+slashup = movable(2900,900,50,50)
+dashup = movable(-200,900,50,50)
 slash = movable(0,0,60,40)
-ifloort = pygame.Rect(0,1000,3000,50)
-ibackwall = pygame.Rect(0,400,50,600)
-iceiling = pygame.Rect(0,400,2000,50)
-ifrontwall = pygame.Rect(3000,700,50,400)
-ifloort2 = pygame.Rect(3000,700,1000,50)
-ibackwall2 = pygame.Rect(2000,0,50,600)
-idjtest = pygame.Rect(4000,100,50,600)
-idjwalk = pygame.Rect(4000,100,1000,50)
-idjwalkceiling = pygame.Rect(4000,-100,2000,50)
-idashtest = pygame.Rect(5300,100,1500,50)
+ifloort = movable(0,1000,3000,50)
+ibackwall = movable(0,400,50,600)
+iceiling = movable(0,400,2000,50)
+ifrontwall = movable(3000,700,50,400)
+ifloort2 = movable(3000,700,1000,50)
+ibackwall2 = movable(2000,0,50,600)
+idjtest = movable(4000,100,50,600)
+idjwalk = movable(4000,100,1000,50)
+idjwalkceiling = movable(4000,-100,2000,50)
+idashtest = movable(5300,100,1500,50)
+deadfloort = movable(0,1000,2000,50)
+deadbwall = movable(0,0,50,1000)
+deadceil = movable(0,0,3050,50)
+deadfwall1 = movable(2000,600,50,400)
+deadfloort2 = movable(2050,600,1000,50)
+deadfwall2 = movable(3050,0,50,600)
+bossfloort = movable(0,1000,1800,50)
 objects = [ibackwall,iceiling,ifrontwall,ibackwall2,idjtest,idjwalkceiling]
 tobjects = [ifloort,ifloort2,idjwalk,idashtest]
 enemies = []
@@ -110,7 +145,14 @@ run = True
 
 while run:
     if soul<1:
-        run = False
+        levsave = level
+        soul = 1
+        level = 2
+        time = 150
+        objects = [deadfwall1,deadbwall,deadceil,deadfwall2]
+        tobjects = [deadfloort,deadfloort2]
+        resetlevel(objects,tobjects)
+
     
 
     screen.fill((255,255,255))
@@ -121,7 +163,7 @@ while run:
     pygame.draw.rect(screen,(200,200,200),soulbar,soul)
     text0 = tutorialfont.render(str(cash),True,(0,0,0),(255,255,255))
     screen.blit(text0,(100,100))
-    if slashc > 150:
+    if slashc > sli * 3:
         slash.hidden = False
         if facing == 1:
             slash.x=player.right
@@ -135,9 +177,9 @@ while run:
         if len(objects) == 0:
             objects = [roof,fwall,bwall,plat1,plat2,plat3,plat4,fiwall,backboard]
             tobjects = [floort,tplat1,tplat2,tplat3,tplat4,floort2,invis_sfloort]
-            enemies = [enemy1,enemy2]
-            projectileenemies = [enemyprojectile]
-            noncols = [sbackboard,invis_secret,secret,dashup]
+            enemies = [enemy1,enemy2,enemy3]
+            projectileenemies = [enemyprojectile,enemyprojectile2]
+            noncols = [sbackboard,invis_secret,secret,dashup,slashup]
         
         pygame.draw.rect(screen,(0,0,0),floort)
         pygame.draw.rect(screen,(0,0,0),sbackboard)
@@ -161,11 +203,16 @@ while run:
             pygame.draw.rect(screen,(20,20,20),secret)
         if dashup in noncols:
             pygame.draw.rect(screen,(20,20,20),dashup)
+        if slashup in noncols:
+            pygame.draw.rect(screen,(20,20,20),slashup)
+        if backboard.centerx < -4500:
+            text = tutorialfont.render('w to travel to the next level',True,(0,0,0),(255,255,255))
+            screen.blit(text,(900,200))
+            if key[pygame.K_w] == True:
+                level = 3
         
     
-#        objects.clear
-#        tobjects.clear
-#        enemies.clear
+
     elif level == 0:
         pygame.draw.rect(screen,(0,0,0),ifloort)
         pygame.draw.rect(screen,(0,0,0),ibackwall)
@@ -219,12 +266,48 @@ while run:
                         if ftc < 1:
                             ft5 += 1
                             ftc = 4
-                    if ibackwall.centerx < -5800:
+                    if ibackwall.centerx < -5600 and key[pygame.K_e] == True:
                         objects.clear()
                         tobjects.clear()
                         level = 1
+    elif level == 2:
+        objects = [deadfwall1,deadbwall,deadceil,deadfwall2]
+        tobjects = [deadfloort,deadfloort2]
+        enemies = []
+        noncols = []
+        projectiles = []
+        projectileenemies = []
+        pygame.draw.rect(screen,(0,0,0),deadfloort2)
+        pygame.draw.rect(screen,(0,0,0),deadfloort)
+        pygame.draw.rect(screen,(0,0,0),deadbwall)
+        pygame.draw.rect(screen,(0,0,0),deadceil)
+        pygame.draw.rect(screen,(0,0,0),deadfwall1)
+        pygame.draw.rect(screen,(0,0,0),deadfwall2)
+        pygame.draw.rect(screen,(200,0,0),timebar,time)
+        if timec < 1:
+            time-=1
+            timec = 15
+        else:
+            timec-=1
+        timebar.width = time
+        if time < 1:
+            run = False
+        if deadbwall.left < -2000:
+            level = levsave
+            resetlevel(objects,tobjects)
+            deadbwall.left = 0
+            objects.clear()
+    
+    elif level == 3:
+        objects = []
+        tobjects = [bossfloort]
+        enemies = []
+        noncols = []
+        projectiles = []
+        projectileenemies = []
+        boss = 1
 
-
+            
 
 
     # Check if we're on the screen
@@ -292,7 +375,7 @@ while run:
     else:
         screen.blit(player_front_image,(885,480))
     if key[pygame.K_e] == True and slashc < 1:
-        slashc = 200
+        slashc = sli * 4
 
 
     if colt() == False and col() == False:
@@ -373,7 +456,7 @@ while run:
                 print(str(anEnemy)+" is falling.")
             if anEnemy.colliderect(slash) and anEnemy.invulnrabilityc < 1 and slash.hidden == False:
                 anEnemy.health-=sldammage
-                anEnemy.invulnrabilityc=50
+                anEnemy.invulnrabilityc=sli
                 if xposition < anEnemy.centerx:
                     anEnemy.ensxm += 11
                 else:
@@ -399,7 +482,7 @@ while run:
                     apEnemy.move_ip(0,-1)
 
                 if apEnemy.cooldown < 1:
-                    projectile = movable(apEnemy.y + 50,apEnemy.x,10,10)
+                    projectile = movable(apEnemy.x,apEnemy.y + 50,10,10)
                     projectiles.append(projectile)
                     if apEnemy.x < 900:
                         projectiles[len(projectiles) - 1].ensxm = 1
@@ -414,7 +497,7 @@ while run:
                 print(str(apEnemy)+" is falling.")
             if apEnemy.colliderect(slash) and apEnemy.invulnrabilityc < 1 and slash.hidden == False:
                 apEnemy.health-=sldammage
-                apEnemy.invulnrabilityc=50
+                apEnemy.invulnrabilityc=sli
                 if xposition < apEnemy.centerx:
                     apEnemy.ensxm += 11
                 else:
@@ -448,6 +531,15 @@ while run:
                 dashblock = True
                 cash-=3
                 noncols.remove(dashup)
+    if player.colliderect(slashup):
+        if slashup in noncols:
+            text = tutorialfont.render('w to pick up for 3 cash',True,(0,0,0),(255,255,255))
+            screen.blit(text,(900,200))
+            if key[pygame.K_w] == True and cash > 2:
+                sldammage+=1
+                sli-=10
+                cash-=3
+                noncols.remove(slashup)
     
     for aproj in projectiles:
         pygame.draw.rect(screen,(0,0,255),aproj)
@@ -470,7 +562,7 @@ while run:
         soul+=soul_gain
         soulc = 10
     soulbar.width = soul
-
+    #timekeep.sleep(0.005)
     pygame.display.update()
 
 pygame.quit()
