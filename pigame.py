@@ -2,6 +2,7 @@
 import pygame
 pygame.init()
 import time as timekeep
+import random
 
 Screen_Hight = 1000
 Screen_width = 1800
@@ -47,6 +48,7 @@ ymom = 0
 dcool = 0
 xmom = 0
 triggert1 = 1
+knockback = 5
 timec = 0
 sli = 50
 time = 0
@@ -56,14 +58,17 @@ dashblock = False
 slashc = 0
 sldammage = 1
 dash = 12
+platpc = 0
 ftc = 0
 level = 0
 levsave = 0
+ascrollc = 0
 ft1 = 1
 ft2 = 1
 ft3 = 1
 ft4 = 1
 ft5 = 1
+poisonc = 0
 max_soul = 100
 soul_gain = 1
 cash = 0
@@ -128,19 +133,26 @@ deadfwall1 = movable(2000,600,50,400)
 deadfloort2 = movable(2050,600,1000,50)
 deadfwall2 = movable(3050,0,50,600)
 bossfloort = movable(0,1000,1800,50)
+bossfwall = movable(1800,0,50,1000)
+bossbwall = movable(0,0,50,1000)
+bossceiling = movable(0,0,1800,50)
+bosspoisonfloort = movable(50,950,1800,50)
+beelzlbub = movable(900,600,130,150)
+bhealthbar = movable(400,100,100,30)
 objects = [ibackwall,iceiling,ifrontwall,ibackwall2,idjtest,idjwalkceiling]
 tobjects = [ifloort,ifloort2,idjwalk,idashtest]
 enemies = []
 noncols = []
 projectiles = []
 projectileenemies = []
+aps = []
 
 player_front_image = pygame.image.load("player_front.gif")
 player_right_image = pygame.image.load("player_right.gif")
 player_left_image = pygame.transform.flip(player_right_image,True,False)
 
 run = True
-
+beelzlbub.health = 90
 
 
 while run:
@@ -299,13 +311,88 @@ while run:
             objects.clear()
     
     elif level == 3:
-        objects = []
+        objects = [bossbwall,bossfwall,bossceiling]
         tobjects = [bossfloort]
         enemies = []
-        noncols = []
+        noncols = [bosspoisonfloort,beelzlbub]
         projectiles = []
         projectileenemies = []
         boss = 1
+        pygame.draw.rect(screen,(0,0,0),bossfloort)
+        pygame.draw.rect(screen,(0,0,0),bossfwall)
+        pygame.draw.rect(screen,(0,0,0),bossbwall)
+        pygame.draw.rect(screen,(0,0,0),bossceiling)
+        pygame.draw.rect(screen,(200,0,0),bhealthbar,beelzlbub.health)
+        bhealthbar.width = beelzlbub.health
+        if beelzlbub.health > 50:
+            pygame.draw.rect(screen,(255,0,0),beelzlbub)
+            if xposition > beelzlbub.centerx - 600 and xposition < beelzlbub.centerx + 600 and not beelzlbub.colliderect(player):
+                if beelzlbub.ensxm == 0:
+                    if beelzlbub.centerx<player.left:
+                        beelzlbub.move_ip(.7,0)
+                        for awall in objects:
+                            if beelzlbub.colliderect(awall):
+                                beelzlbub.move_ip(-1,0)
+                    else:
+                        beelzlbub.move_ip(-.7,0)
+                        for awall in objects:
+                            if beelzlbub.colliderect(awall):
+                                beelzlbub.move_ip(1,0)
+            cold = 0
+            for atobject in tobjects:
+                if not beelzlbub.colliderect(atobject):
+                    cold += 1
+                else:
+                    beelzlbub.move_ip(0,-1)
+                if beelzlbub.colliderect(player) and invulnrability < 1 and xmom == 0:
+                    soul-=40
+                    invulnrability = 200
+            if cold == len(tobjects):
+                beelzlbub.move_ip(0,1)
+                print(str(beelzlbub)+" is falling.")
+            if beelzlbub.colliderect(slash) and beelzlbub.invulnrabilityc < 1 and slash.hidden == False:
+                beelzlbub.health-=sldammage
+                beelzlbub.invulnrabilityc=sli
+            beelzlbub.invulnrabilityc-=1
+        elif beelzlbub.health > 0:
+            if platpc < 1:
+                beelzplat = movable(500,0,100,50)
+                aps.append(beelzplat)
+                platchoice = random.randint(1,2)
+                if platchoice == 1:
+                    tobjects.append(beelzplat)
+                else:
+                    noncols.append(beelzplat)
+                beelzplat = movable(1200,0,100,50)
+                aps.append(beelzplat)
+                if platchoice == 2:
+                    tobjects.append(beelzplat)
+                else:
+                    noncols.append(beelzplat)
+                platpc = 10000
+            else:
+                platpc-=1
+            for abplat in aps:
+                pygame.draw.rect(screen,(0,0,0),abplat)
+                abplat.move_ip(0,0.5)
+                if abplat.y > 1000:
+                    aps.remove(abplat)
+                    if abplat in tobjects:
+                        tobjects.remove(abplat)
+                    else:
+                        noncols.remove(abplat)
+            pygame.draw.rect(screen,(0,0,0),bosspoisonfloort)
+            if ascrollc < 1:
+                beelzlbub.health-=1
+                ascrollc = 60
+            else:
+                ascrollc-=1
+            if player.colliderect(bosspoisonfloort):
+                if poisonc < 1:
+                    soul-=1
+                    poisonc = 10
+                else:
+                    poisonc-=1
 
             
 
@@ -458,14 +545,16 @@ while run:
                 anEnemy.health-=sldammage
                 anEnemy.invulnrabilityc=sli
                 if xposition < anEnemy.centerx:
-                    anEnemy.ensxm += 11
+                    anEnemy.ensxm += knockback
                 else:
-                    anEnemy.ensxm -= 11
+                    anEnemy.ensxm -= knockback
             anEnemy.invulnrabilityc-=1
             if anEnemy.ensxm>0:
-                anEnemy.ensxm-=1
+                anEnemy.ensxm-=0.1
             elif anEnemy.ensxm<0:
-                anEnemy.ensxm+=1
+                anEnemy.ensxm+=0.1
+            if anEnemy.ensxm < 0.1 and anEnemy.ensxm > -0.1:
+                anEnemy.ensxm = 0
             anEnemy.move_ip(anEnemy.ensxm,0)
         else:
             enemies.remove(anEnemy)
@@ -499,14 +588,16 @@ while run:
                 apEnemy.health-=sldammage
                 apEnemy.invulnrabilityc=sli
                 if xposition < apEnemy.centerx:
-                    apEnemy.ensxm += 11
+                    apEnemy.ensxm += knockback
                 else:
-                    apEnemy.ensxm -= 11
+                    apEnemy.ensxm -= knockback
             apEnemy.invulnrabilityc-=1
             if apEnemy.ensxm>0:
-                apEnemy.ensxm-=1
+                apEnemy.ensxm-=0.1
             elif apEnemy.ensxm<0:
-                apEnemy.ensxm+=1
+                apEnemy.ensxm+=0.1
+            if apEnemy.ensxm < 0.1 and apEnemy.ensxm > -0.1:
+                apEnemy.ensxm = 0
             apEnemy.move_ip(apEnemy.ensxm,0)
         else:
             projectileenemies.remove(apEnemy)
@@ -538,6 +629,7 @@ while run:
             if key[pygame.K_w] == True and cash > 2:
                 sldammage+=1
                 sli-=10
+                knockback+=1
                 cash-=3
                 noncols.remove(slashup)
     
