@@ -68,11 +68,12 @@ ft2 = 1
 ft3 = 1
 ft4 = 1
 ft5 = 1
-poisonc = 0
+poisonc = 300
 max_soul = 100
 soul_gain = 1
 cash = 0
 invulnrability = 0
+harvestg = False
 tutorialfont = pygame.font.SysFont(None,40)
 
 def resetlevel(objects,tobjects):
@@ -139,6 +140,19 @@ bossceiling = movable(0,0,1800,50)
 bosspoisonfloort = movable(50,950,1800,50)
 beelzlbub = movable(900,600,130,150)
 bhealthbar = movable(400,100,100,30)
+ml2bwall1 = movable(0,0,50,1000)
+ml2floort1 = movable(0,1000,1500,50)
+ml2ceiling1 = movable(0,0,2300,50)
+ml2floort2 = movable(1500,1500,3000,50)
+ml2bwall2 = movable(2300,-2000,50,2000)
+ml2fwall1 = movable(4500,-1000,50,2500)
+ml2ceil2 = movable(2300,-2000,6000,50)
+ml2floort3 =  movable(4500,-1000,2000,50)
+ml2floort4 = movable(5500,1000,3000,50)
+ml2fwall2 = movable(6000,-1000,50,1500)
+ml2bwall3 = movable(7500,-1000,50,2000)
+ml2ceil3 = movable(6000,500,2500,50)
+ml2bwall4 = movable(8500,500,50,500)
 objects = [ibackwall,iceiling,ifrontwall,ibackwall2,idjtest,idjwalkceiling]
 tobjects = [ifloort,ifloort2,idjwalk,idashtest]
 enemies = []
@@ -168,6 +182,20 @@ while run:
     
 
     screen.fill((255,255,255))
+    for anmobject in objects:
+        pygame.draw.rect(screen,(0,0,0),anmobject)
+    for aproj in projectiles:
+        pygame.draw.rect(screen,(0,0,255),aproj)
+    for anmtobject in tobjects:
+        pygame.draw.rect(screen,(0,0,0),anmtobject)
+    for anmenemy in enemies:
+        pygame.draw.rect(screen,(200,0,0),anmenemy)
+    for anmnoncol in noncols:
+        pygame.draw.rect(screen,(30,30,30),anmnoncol)
+    for anmpenemy in projectileenemies:
+        pygame.draw.rect(screen,(0,200,0),anmpenemy)
+    for anmaps in aps:
+        pygame.draw.rect(screen,(0,0,0),aps)
 
     #pygame.draw.circle(screen,(255,0,0),player.center,40)
     
@@ -192,31 +220,6 @@ while run:
             enemies = [enemy1,enemy2,enemy3]
             projectileenemies = [enemyprojectile,enemyprojectile2]
             noncols = [sbackboard,invis_secret,secret,dashup,slashup]
-        
-        pygame.draw.rect(screen,(0,0,0),floort)
-        pygame.draw.rect(screen,(0,0,0),sbackboard)
-        pygame.draw.rect(screen,(0,0,0),backboard)
-        pygame.draw.rect(screen,(0,0,0),roof)
-        pygame.draw.rect(screen,(0,0,0),fwall)
-        pygame.draw.rect(screen,(0,0,0),bwall)
-        pygame.draw.rect(screen,(0,0,0),plat1)
-        pygame.draw.rect(screen,(0,0,0),tplat1)
-        pygame.draw.rect(screen,(0,0,0),plat2)
-        pygame.draw.rect(screen,(0,0,0),tplat2)
-        pygame.draw.rect(screen,(0,0,0),plat3)
-        pygame.draw.rect(screen,(0,0,0),tplat3)
-        pygame.draw.rect(screen,(0,0,0),plat4)
-        pygame.draw.rect(screen,(0,0,0),tplat4)
-        pygame.draw.rect(screen,(0,0,0),floort2)
-        pygame.draw.rect(screen,(0,0,0),fiwall)
-        pygame.draw.rect(screen,(20,20,20),invis_secret)
-        pygame.draw.rect(screen,(20,20,20),invis_sfloort)
-        if secret in noncols:
-            pygame.draw.rect(screen,(20,20,20),secret)
-        if dashup in noncols:
-            pygame.draw.rect(screen,(20,20,20),dashup)
-        if slashup in noncols:
-            pygame.draw.rect(screen,(20,20,20),slashup)
         if backboard.centerx < -4500:
             text = tutorialfont.render('w to travel to the next level',True,(0,0,0),(255,255,255))
             screen.blit(text,(900,200))
@@ -226,16 +229,6 @@ while run:
     
 
     elif level == 0:
-        pygame.draw.rect(screen,(0,0,0),ifloort)
-        pygame.draw.rect(screen,(0,0,0),ibackwall)
-        pygame.draw.rect(screen,(0,0,0),iceiling)
-        pygame.draw.rect(screen,(0,0,0),ifrontwall)
-        pygame.draw.rect(screen,(0,0,0),ifloort2)
-        pygame.draw.rect(screen,(0,0,0),ibackwall2)
-        pygame.draw.rect(screen,(0,0,0),idjtest)
-        pygame.draw.rect(screen,(0,0,0),idjwalk)
-        pygame.draw.rect(screen,(0,0,0),idjwalkceiling)
-        pygame.draw.rect(screen,(0,0,0),idashtest)
         if ft1 < 255 and not ibackwall.centerx < -1000:    
             text = tutorialfont.render('A and D to move',True,(ft1,ft1,ft1),(255,255,255))
             screen.blit(text,(900,200))
@@ -289,12 +282,6 @@ while run:
         noncols = []
         projectiles = []
         projectileenemies = []
-        pygame.draw.rect(screen,(0,0,0),deadfloort2)
-        pygame.draw.rect(screen,(0,0,0),deadfloort)
-        pygame.draw.rect(screen,(0,0,0),deadbwall)
-        pygame.draw.rect(screen,(0,0,0),deadceil)
-        pygame.draw.rect(screen,(0,0,0),deadfwall1)
-        pygame.draw.rect(screen,(0,0,0),deadfwall2)
         pygame.draw.rect(screen,(200,0,0),timebar,time)
         if timec < 1:
             time-=1
@@ -307,34 +294,33 @@ while run:
         if deadbwall.left < -2000:
             level = levsave
             resetlevel(objects,tobjects)
+            invulnrability = 300
+            poisonc = 300
             deadbwall.left = 0
             objects.clear()
     
     elif level == 3:
-        objects = [bossbwall,bossfwall,bossceiling]
-        tobjects = [bossfloort]
-        enemies = []
-        noncols = [bosspoisonfloort,beelzlbub]
-        projectiles = []
-        projectileenemies = []
+        if not bossfloort in tobjects:    
+            objects = [bossbwall,bossfwall,bossceiling]
+            tobjects = [bossfloort]
+            enemies = []
+            noncols = [bosspoisonfloort,beelzlbub]
+            projectiles = []
+            projectileenemies = []
         boss = 1
-        pygame.draw.rect(screen,(0,0,0),bossfloort)
-        pygame.draw.rect(screen,(0,0,0),bossfwall)
-        pygame.draw.rect(screen,(0,0,0),bossbwall)
-        pygame.draw.rect(screen,(0,0,0),bossceiling)
         pygame.draw.rect(screen,(200,0,0),bhealthbar,beelzlbub.health)
-        bhealthbar.width = beelzlbub.health
+        bhealthbar.width = beelzlbub.health * 10
         if beelzlbub.health > 50:
             pygame.draw.rect(screen,(255,0,0),beelzlbub)
             if xposition > beelzlbub.centerx - 600 and xposition < beelzlbub.centerx + 600 and not beelzlbub.colliderect(player):
                 if beelzlbub.ensxm == 0:
                     if beelzlbub.centerx<player.left:
-                        beelzlbub.move_ip(.7,0)
+                        beelzlbub.move_ip(.4,0)
                         for awall in objects:
                             if beelzlbub.colliderect(awall):
                                 beelzlbub.move_ip(-1,0)
                     else:
-                        beelzlbub.move_ip(-.7,0)
+                        beelzlbub.move_ip(-.4,0)
                         for awall in objects:
                             if beelzlbub.colliderect(awall):
                                 beelzlbub.move_ip(1,0)
@@ -345,8 +331,8 @@ while run:
                 else:
                     beelzlbub.move_ip(0,-1)
                 if beelzlbub.colliderect(player) and invulnrability < 1 and xmom == 0:
-                    soul-=40
-                    invulnrability = 200
+                    soul-=100
+                    invulnrability = 300
             if cold == len(tobjects):
                 beelzlbub.move_ip(0,1)
                 print(str(beelzlbub)+" is falling.")
@@ -356,26 +342,26 @@ while run:
             beelzlbub.invulnrabilityc-=1
         elif beelzlbub.health > 0:
             if platpc < 1:
-                beelzplat = movable(500,0,100,50)
+                beelzplat = movable(bossbwall.x + 500,bossceiling.y,150,50)
                 aps.append(beelzplat)
                 platchoice = random.randint(1,2)
                 if platchoice == 1:
                     tobjects.append(beelzplat)
                 else:
                     noncols.append(beelzplat)
-                beelzplat = movable(1200,0,100,50)
-                aps.append(beelzplat)
+                beelzplatp2 = movable(bossbwall.x + 1200,bossceiling.y,150,50)
+                aps.append(beelzplatp2)
                 if platchoice == 2:
-                    tobjects.append(beelzplat)
+                    tobjects.append(beelzplatp2)
                 else:
-                    noncols.append(beelzplat)
-                platpc = 10000
+                    noncols.append(beelzplatp2)
+                platpc = 1000
             else:
                 platpc-=1
             for abplat in aps:
                 pygame.draw.rect(screen,(0,0,0),abplat)
-                abplat.move_ip(0,0.5)
-                if abplat.y > 1000:
+                abplat.move_ip(0,0.3)
+                if abplat.y > bossfloort.y:
                     aps.remove(abplat)
                     if abplat in tobjects:
                         tobjects.remove(abplat)
@@ -384,17 +370,23 @@ while run:
             pygame.draw.rect(screen,(0,0,0),bosspoisonfloort)
             if ascrollc < 1:
                 beelzlbub.health-=1
-                ascrollc = 60
+                ascrollc = 150
             else:
                 ascrollc-=1
             if player.colliderect(bosspoisonfloort):
                 if poisonc < 1:
-                    soul-=1
-                    poisonc = 10
+                    soul-=2
                 else:
                     poisonc-=1
-
-            
+        else:
+            harvestg = True
+            level = 4
+    elif level == 4:
+        objects = []
+        tobjects = []
+        enemies = []
+        projectileenemies = []
+        noncols = []
 
 
     # Check if we're on the screen
@@ -446,7 +438,7 @@ while run:
         if col() == True:
             l = 0
             while l < len(objectsList):
-                objectsList[l].move_ip(-2*x,0)
+                objectsList[l].move_ip(-1.4*x,0)
                 l+=1
 
     key = pygame.key.get_pressed()
@@ -477,10 +469,10 @@ while run:
         ymom = -10
         jumps = 1
         jcool = 250
-    elif key[pygame.K_SPACE] == True and soul > 30 and jumps >0 and jcool < 1:
+    elif key[pygame.K_SPACE] == True and soul > 40 and jumps >0 and jcool < 1:
         ymom = -10
         jumps = 0
-        soul-=30
+        soul-=40
 
 
     if key[pygame.K_q] == True and soul > 40 and dcool < 1:
@@ -513,10 +505,10 @@ while run:
                 print("bottom col")
                 for thobject in objects+tobjects+enemies+noncols+projectileenemies+projectiles:
                     thobject.move_ip(0,-1)
+                    ymom = 0
 
     for anEnemy in enemies:
         if anEnemy.health > 0:
-            pygame.draw.rect(screen,(255,0,0),anEnemy)
             if xposition > anEnemy.centerx - 600 and xposition < anEnemy.centerx + 600 and not anEnemy.colliderect(player):
                 if anEnemy.ensxm == 0:
                     if anEnemy.centerx<player.left:
@@ -562,7 +554,6 @@ while run:
             
     for apEnemy in projectileenemies:
         if apEnemy.health > 0:
-            pygame.draw.rect(screen,(0,255,0),apEnemy)
             cold = 0
             for atobject in tobjects:
                 if not apEnemy.colliderect(atobject):
@@ -634,7 +625,6 @@ while run:
                 noncols.remove(slashup)
     
     for aproj in projectiles:
-        pygame.draw.rect(screen,(0,0,255),aproj)
         aproj.move_ip(aproj.ensxm,0)
         if player.colliderect(aproj) and xmom == 0:
             soul-=20
@@ -655,6 +645,8 @@ while run:
         soulc = 10
     soulbar.width = soul
     #timekeep.sleep(0.005)
+
+
     pygame.display.update()
 
 pygame.quit()
