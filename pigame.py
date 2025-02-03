@@ -144,7 +144,7 @@ ml2bwall1 = movable(0,0,50,1000)
 ml2floort1 = movable(0,1000,1500,50)
 ml2ceiling1 = movable(0,0,2300,50)
 ml2floort2 = movable(1500,1500,3000,50)
-ml2bwall2 = movable(2300,-2000,50,2000)
+ml2bwall2 = movable(2300,-2000,50,2500)
 ml2fwall1 = movable(4500,-1000,50,2500)
 ml2ceil2 = movable(2300,-2000,6000,50)
 ml2floort3 =  movable(4500,-1000,2000,50)
@@ -153,6 +153,28 @@ ml2fwall2 = movable(6000,-1000,50,1500)
 ml2bwall3 = movable(7500,-1000,50,2000)
 ml2ceil3 = movable(6000,500,2500,50)
 ml2bwall4 = movable(8500,500,50,500)
+ml2secretar1 = movable(1000,1000,500,500)
+ml2secret1 = movable(1200,1400,50,50)
+ml2secretfloort1 = movable(1000,1500,500,50)
+ml2secretar2 = movable(4500,-1000,500,500)
+ml2secret2 = movable(4700,-600,50,50)
+ml2secretfloort2 = movable(4500,-500,500,50)
+ml2secretar3 = movable(1800,0,500,500)
+ml2secret3 = movable(2000,400,50,50)
+ml2secretfloort3 = movable(1800,500,500,50)
+ml2secretar4 = movable(5300,-2000,500,500)
+ml2secret4 = movable(5500,-1600,50,50)
+ml2secretfloort4 = movable(5300,-1500,500,50)
+ml2secretar5 = movable(7000,500,500,500)
+ml2secret5 = movable(7200,900,50,50)
+ml2secretfloort5 = movable(7000,1000,500,50)
+ml2secretar6 = movable(8300,-2000,500,500)
+ml2secret6 = movable(8500,-1600,50,50)
+ml2secretfloort6 = movable(8300,-1500,500,50)
+ml2plat1 = movable(4200,500,150,50)
+ml2plat2 = movable(3900,100,150,50)
+ml2plat3 = movable(4200,-300,150,50)
+ml2plat4 = movable(3900,-700,150,50)
 objects = [ibackwall,iceiling,ifrontwall,ibackwall2,idjtest,idjwalkceiling]
 tobjects = [ifloort,ifloort2,idjwalk,idashtest]
 enemies = []
@@ -195,7 +217,7 @@ while run:
     for anmpenemy in projectileenemies:
         pygame.draw.rect(screen,(0,200,0),anmpenemy)
     for anmaps in aps:
-        pygame.draw.rect(screen,(0,0,0),aps)
+        pygame.draw.rect(screen,(0,0,0),anmaps)
 
     #pygame.draw.circle(screen,(255,0,0),player.center,40)
     
@@ -382,11 +404,12 @@ while run:
             harvestg = True
             level = 4
     elif level == 4:
-        objects = []
-        tobjects = []
+        objects = [ml2bwall1,ml2bwall2,ml2bwall3,ml2bwall4,ml2ceiling1,ml2ceil2,ml2ceil3,ml2fwall1,ml2fwall2]
+        tobjects = [ml2floort1,ml2floort2,ml2floort3,ml2floort4,ml2secretfloort1,ml2secretfloort2,ml2secretfloort3,ml2secretfloort4,ml2secretfloort5,ml2secretfloort6,ml2plat1,ml2plat2,ml2plat3,ml2plat4]
         enemies = []
         projectileenemies = []
-        noncols = []
+        noncols = [ml2secretar1,ml2secret1,ml2secretar2,ml2secret2,ml2secretar3,ml2secret3,ml2secretar4,ml2secret4,ml2secretar5,ml2secret5,ml2secretar6,ml2secret6]
+        aps = [ml2plat1,ml2plat2,ml2plat3,ml2plat4]
 
 
     # Check if we're on the screen
