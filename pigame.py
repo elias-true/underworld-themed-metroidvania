@@ -148,11 +148,11 @@ ml2bwall2 = movable(2300,-2000,50,2500)
 ml2fwall1 = movable(4500,-1000,50,2500)
 ml2ceil2 = movable(2300,-2000,6000,50)
 ml2floort3 =  movable(4500,-1000,2000,50)
-ml2floort4 = movable(5500,1000,3000,50)
-ml2fwall2 = movable(6000,-1000,50,1500)
-ml2bwall3 = movable(7500,-1000,50,2000)
-ml2ceil3 = movable(6000,500,2500,50)
-ml2bwall4 = movable(8500,500,50,500)
+ml2floort4 = movable(6000,1000,5000,50)
+ml2fwall2 = movable(6000,-1000,50,2000)
+ml2bwall3 = movable(7500,-1000,50,1500)
+ml2ceil3 = movable(7500,500,3500,50)
+ml2bwall4 = movable(11000,500,50,500)
 ml2secretar1 = movable(1000,1000,500,500)
 ml2secret1 = movable(1200,1400,50,50)
 ml2secretfloort1 = movable(1000,1500,500,50)
@@ -175,6 +175,8 @@ ml2plat1 = movable(4200,500,150,50)
 ml2plat2 = movable(3900,100,150,50)
 ml2plat3 = movable(4200,-300,150,50)
 ml2plat4 = movable(3900,-700,150,50)
+ml2plat5 = movable(3900,900,150,50)
+
 objects = [ibackwall,iceiling,ifrontwall,ibackwall2,idjtest,idjwalkceiling]
 tobjects = [ifloort,ifloort2,idjwalk,idashtest]
 enemies = []
@@ -209,7 +211,7 @@ while run:
     for aproj in projectiles:
         pygame.draw.rect(screen,(0,0,255),aproj)
     for anmtobject in tobjects:
-        pygame.draw.rect(screen,(0,0,0),anmtobject)
+        pygame.draw.rect(screen,(0,0,80),anmtobject)
     for anmenemy in enemies:
         pygame.draw.rect(screen,(200,0,0),anmenemy)
     for anmnoncol in noncols:
@@ -304,6 +306,7 @@ while run:
         noncols = []
         projectiles = []
         projectileenemies = []
+        aps = []
         pygame.draw.rect(screen,(200,0,0),timebar,time)
         if timec < 1:
             time-=1
@@ -381,7 +384,6 @@ while run:
             else:
                 platpc-=1
             for abplat in aps:
-                pygame.draw.rect(screen,(0,0,0),abplat)
                 abplat.move_ip(0,0.3)
                 if abplat.y > bossfloort.y:
                     aps.remove(abplat)
@@ -389,7 +391,6 @@ while run:
                         tobjects.remove(abplat)
                     else:
                         noncols.remove(abplat)
-            pygame.draw.rect(screen,(0,0,0),bosspoisonfloort)
             if ascrollc < 1:
                 beelzlbub.health-=1
                 ascrollc = 150
@@ -405,11 +406,12 @@ while run:
             level = 4
     elif level == 4:
         objects = [ml2bwall1,ml2bwall2,ml2bwall3,ml2bwall4,ml2ceiling1,ml2ceil2,ml2ceil3,ml2fwall1,ml2fwall2]
-        tobjects = [ml2floort1,ml2floort2,ml2floort3,ml2floort4,ml2secretfloort1,ml2secretfloort2,ml2secretfloort3,ml2secretfloort4,ml2secretfloort5,ml2secretfloort6,ml2plat1,ml2plat2,ml2plat3,ml2plat4]
+        tobjects = [ml2floort1,ml2floort2,ml2floort3,ml2floort4,ml2secretfloort1,ml2secretfloort2,ml2secretfloort3,ml2secretfloort4,ml2secretfloort5,ml2secretfloort6,ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
         enemies = []
         projectileenemies = []
         noncols = [ml2secretar1,ml2secret1,ml2secretar2,ml2secret2,ml2secretar3,ml2secret3,ml2secretar4,ml2secret4,ml2secretar5,ml2secret5,ml2secretar6,ml2secret6]
-        aps = [ml2plat1,ml2plat2,ml2plat3,ml2plat4]
+        aps = [ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
+
 
 
     # Check if we're on the screen
