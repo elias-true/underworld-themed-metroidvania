@@ -72,6 +72,8 @@ poisonc = 300
 max_soul = 100
 soul_gain = 1
 cash = 0
+apsh = 0
+apss = 0
 invulnrability = 0
 harvestg = False
 tutorialfont = pygame.font.SysFont(None,40)
@@ -169,13 +171,29 @@ ml2secretar5 = movable(7000,500,500,500)
 ml2secret5 = movable(7200,900,50,50)
 ml2secretfloort5 = movable(7000,1000,500,50)
 ml2secretar6 = movable(8300,-2000,500,500)
-ml2secret6 = movable(8500,-1600,50,50)
+ml2secret6 = movable(6000,-1600,50,50)
 ml2secretfloort6 = movable(8300,-1500,500,50)
 ml2plat1 = movable(4200,500,150,50)
 ml2plat2 = movable(3900,100,150,50)
 ml2plat3 = movable(4200,-300,150,50)
 ml2plat4 = movable(3900,-700,150,50)
 ml2plat5 = movable(3900,900,150,50)
+ml2enemy1 = movable(400,800,50,100)
+ml2enemy2 = movable(900,800,50,100)
+ml2enemy3 = movable(1800,1300,50,100)
+ml2enemy4 = movable(2300,1300,50,100)
+ml2penemy1 = movable(2500,1300,50,100)
+ml2enemy5 = movable(4900,-1100,50,100)
+ml2enemy6 = movable(5200,-1100,50,100)
+ml2penemy2 = movable(5500,-1100,50,100)
+ml2enemy7 = movable(7500,900,50,100)
+ml2enemy8 = movable(7800,900,50,100)
+ml2enemy9 = movable(8100,900,50,100)
+ml2enemy10 = movable(8400,900,50,100)
+ml2enemy11 = movable(8700,900,50,100)
+ml2penemy3 = movable(8900,900,50,100)
+ml2penemy4 = movable(9200,900,50,100)
+ml2penemy5 = movable(9500,900,50,100)
 
 objects = [ibackwall,iceiling,ifrontwall,ibackwall2,idjtest,idjwalkceiling]
 tobjects = [ifloort,ifloort2,idjwalk,idashtest]
@@ -356,7 +374,7 @@ while run:
                 else:
                     beelzlbub.move_ip(0,-1)
                 if beelzlbub.colliderect(player) and invulnrability < 1 and xmom == 0:
-                    soul-=100
+#                    soul-=100
                     invulnrability = 300
             if cold == len(tobjects):
                 beelzlbub.move_ip(0,1)
@@ -405,12 +423,16 @@ while run:
             harvestg = True
             level = 4
     elif level == 4:
-        objects = [ml2bwall1,ml2bwall2,ml2bwall3,ml2bwall4,ml2ceiling1,ml2ceil2,ml2ceil3,ml2fwall1,ml2fwall2]
-        tobjects = [ml2floort1,ml2floort2,ml2floort3,ml2floort4,ml2secretfloort1,ml2secretfloort2,ml2secretfloort3,ml2secretfloort4,ml2secretfloort5,ml2secretfloort6,ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
-        enemies = []
-        projectileenemies = []
-        noncols = [ml2secretar1,ml2secret1,ml2secretar2,ml2secret2,ml2secretar3,ml2secret3,ml2secretar4,ml2secret4,ml2secretar5,ml2secret5,ml2secretar6,ml2secret6]
-        aps = [ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
+        if not ml2bwall1 in objects:
+            objects = [ml2bwall1,ml2bwall2,ml2bwall3,ml2bwall4,ml2ceiling1,ml2ceil2,ml2ceil3,ml2fwall1,ml2fwall2]
+            tobjects = [ml2floort1,ml2floort2,ml2floort3,ml2floort4,ml2secretfloort1,ml2secretfloort2,ml2secretfloort3,ml2secretfloort4,ml2secretfloort5,ml2secretfloort6,ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
+            enemies = [ml2enemy1,ml2enemy2,ml2enemy3,ml2enemy4,ml2enemy5,ml2enemy6,ml2enemy7,ml2enemy8,ml2enemy9,ml2enemy10,ml2enemy11]
+            projectileenemies = [ml2penemy1,ml2penemy2,ml2penemy3,ml2penemy4,ml2penemy5]
+            noncols = [ml2secretar1,ml2secret1,ml2secretar2,ml2secret2,ml2secretar3,ml2secret3,ml2secretar4,ml2secret4,ml2secretar5,ml2secret5,ml2secretar6,ml2secret6]
+            aps = [ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
+        if apss == 0:
+            
+        
 
 
 
@@ -652,7 +674,7 @@ while run:
     for aproj in projectiles:
         aproj.move_ip(aproj.ensxm,0)
         if player.colliderect(aproj) and xmom == 0:
-            soul-=20
+            soul-=30
             projectiles.remove(aproj)
         for awall in objects:
             if aproj.colliderect(awall):
@@ -667,7 +689,7 @@ while run:
     dcool-=1
     if soulc < 1 and soul < max_soul:
         soul+=soul_gain
-        soulc = 10
+        soulc = 15
     soulbar.width = soul
     #timekeep.sleep(0.005)
 
