@@ -20,6 +20,7 @@ class movable(pygame.Rect):
     invulnrabilityc = 0
     hidden = False
     ensxm = 0
+    ensym = 0
     cooldown = 0
     initback = None
     inittop = None
@@ -67,6 +68,7 @@ ft1 = 1
 ft2 = 1
 ft3 = 1
 ft4 = 1
+bcount = 0
 ft5 = 1
 poisonc = 300
 max_soul = 100
@@ -78,8 +80,8 @@ invulnrability = 0
 harvestg = False
 tutorialfont = pygame.font.SysFont(None,40)
 
-def resetlevel(objects,tobjects):
-    for anobject in tobjects + objects:
+def resetlevel(objects):
+    for anobject in objects:
         anobject.resetInitialPosition()
 
 soul = 100
@@ -92,8 +94,8 @@ player = movable(xposition,yposition - 20,30,60)
 enemy1 = movable(1300,800,50,100)
 enemy2 = movable(2500,100,50,100)
 enemy3 = movable(3400,-400,50,100)
-enemyprojectile = movable(1500,900,50,100)
-enemyprojectile2 = movable(3700,-400,50,100)
+enemyprojectile = movable(1500,800,50,100)
+enemyprojectile2 = movable(3700,-500,50,100)
 #map instanciacion
 floort = movable(-500,980,3500,20)
 sbackboard = movable(-500,0,500,1100)
@@ -194,13 +196,16 @@ ml2enemy11 = movable(8700,900,50,100)
 ml2penemy3 = movable(8900,900,50,100)
 ml2penemy4 = movable(9200,900,50,100)
 ml2penemy5 = movable(9500,900,50,100)
+ml2senemy = movable(9600,900,50,100)
 
-objects = [ibackwall,iceiling,ifrontwall,ibackwall2,idjtest,idjwalkceiling]
-tobjects = [ifloort,ifloort2,idjwalk,idashtest]
+objects = [ibackwall,iceiling,ifrontwall,ibackwall2,idjtest,idjwalkceiling,ifloort,ifloort2,idjwalk,idashtest]
+tobjects = []
 enemies = []
+senemies = []
 noncols = []
 projectiles = []
 projectileenemies = []
+spenemies = []
 aps = []
 
 player_front_image = pygame.image.load("player_front.gif")
@@ -217,9 +222,9 @@ while run:
         soul = 1
         level = 2
         time = 150
-        objects = [deadfwall1,deadbwall,deadceil,deadfwall2]
-        tobjects = [deadfloort,deadfloort2]
-        resetlevel(objects,tobjects)
+        objects = [deadfwall1,deadbwall,deadceil,deadfwall2,deadfloort,deadfloort2]
+        tobjects = []
+        resetlevel(objects)
 
     
 
@@ -233,11 +238,15 @@ while run:
     for anmenemy in enemies:
         pygame.draw.rect(screen,(200,0,0),anmenemy)
     for anmnoncol in noncols:
-        pygame.draw.rect(screen,(30,30,30),anmnoncol)
+        pygame.draw.rect(screen,(50,0,0),anmnoncol)
     for anmpenemy in projectileenemies:
         pygame.draw.rect(screen,(0,200,0),anmpenemy)
     for anmaps in aps:
         pygame.draw.rect(screen,(0,0,0),anmaps)
+    for senemyn in senemies:
+        pygame.draw.rect(screen,(150,150,0),senemyn)
+    for spawneden in spenemies:
+        pygame.draw.rect(screen,(150,0,0),spawneden)
 
     #pygame.draw.circle(screen,(255,0,0),player.center,40)
     
@@ -257,8 +266,8 @@ while run:
         slash.hidden = True
     if level == 1:
         if len(objects) == 0:
-            objects = [roof,fwall,bwall,plat1,plat2,plat3,plat4,fiwall,backboard]
-            tobjects = [floort,tplat1,tplat2,tplat3,tplat4,floort2,invis_sfloort]
+            objects = [roof,fwall,bwall,plat1,plat2,plat3,plat4,fiwall,backboard,floort,tplat1,tplat2,tplat3,tplat4,floort2,invis_sfloort]
+            tobjects = []
             enemies = [enemy1,enemy2,enemy3]
             projectileenemies = [enemyprojectile,enemyprojectile2]
             noncols = [sbackboard,invis_secret,secret,dashup,slashup]
@@ -318,13 +327,15 @@ while run:
                         tobjects.clear()
                         level = 1
     elif level == 2:
-        objects = [deadfwall1,deadbwall,deadceil,deadfwall2]
-        tobjects = [deadfloort,deadfloort2]
+        objects = [deadfwall1,deadbwall,deadceil,deadfwall2,deadfloort,deadfloort2]
+        tobjects = []
         enemies = []
         noncols = []
         projectiles = []
         projectileenemies = []
         aps = []
+        text = tutorialfont.render('escape',True,(255,0,0),(255,255,255))
+        screen.blit(text,(900,200))
         pygame.draw.rect(screen,(200,0,0),timebar,time)
         if timec < 1:
             time-=1
@@ -336,16 +347,17 @@ while run:
             run = False
         if deadbwall.left < -2000:
             level = levsave
-            resetlevel(objects,tobjects)
+            resetlevel(objects)
             invulnrability = 300
             poisonc = 300
             deadbwall.left = 0
             objects.clear()
     
     elif level == 3:
-        if not bossfloort in tobjects:    
-            objects = [bossbwall,bossfwall,bossceiling]
-            tobjects = [bossfloort]
+        if not bossfloort in objects:  
+            bdc = 0  
+            objects = [bossbwall,bossfwall,bossceiling,bossfloort]
+            tobjects = []
             enemies = []
             noncols = [bosspoisonfloort,beelzlbub]
             projectiles = []
@@ -367,18 +379,34 @@ while run:
                         for awall in objects:
                             if beelzlbub.colliderect(awall):
                                 beelzlbub.move_ip(1,0)
-            cold = 0
-            for atobject in tobjects:
-                if not beelzlbub.colliderect(atobject):
-                    cold += 1
-                else:
-                    beelzlbub.move_ip(0,-1)
-                if beelzlbub.colliderect(player) and invulnrability < 1 and xmom == 0:
-#                    soul-=100
-                    invulnrability = 300
-            if cold == len(tobjects):
+            if colt(beelzlbub) == False:
                 beelzlbub.move_ip(0,1)
-                print(str(beelzlbub)+" is falling.")
+            else:
+                beelzlbub.move_ip(0,-2)
+            if beelzlbub.colliderect(player) and invulnrability < 1 and xmom == 0:
+                soul-=100
+                invulnrability = 300
+            elif beelzlbub.ensxm < 1:
+                beelzlbub.y+=30
+                if beelzlbub.x < 900 and bdc < 1:
+                    beelzlbub.ensxm = -10
+                elif beelzlbub.x > 900 and bdc < 1:
+                    beelzlbub.ensxm = 10
+                bdc = 10000
+            bcount = 0
+            for anobject in objects:
+                if not beelzlbub.colliderect(anobject):
+                    bcount+=1
+            if not bcount == len(objects):
+                beelzlbub.ensxm*=-1
+            beelzlbub.move_ip(beelzlbub.ensxm,0)
+            if beelzlbub.colliderect(player):
+                soul-=2
+            bdc-=1
+            if beelzlbub.ensxm < 0: 
+                beelzlbub.ensxm+=0.5
+            if beelzlbub.ensxm > 0: 
+                beelzlbub.ensxm-=0.5
             if beelzlbub.colliderect(slash) and beelzlbub.invulnrabilityc < 1 and slash.hidden == False:
                 beelzlbub.health-=sldammage
                 beelzlbub.invulnrabilityc=sli
@@ -389,7 +417,7 @@ while run:
                 aps.append(beelzplat)
                 platchoice = random.randint(1,2)
                 if platchoice == 1:
-                    tobjects.append(beelzplat)
+                    objects.append(beelzplat)
                 else:
                     noncols.append(beelzplat)
                 beelzplatp2 = movable(bossbwall.x + 1200,bossceiling.y,150,50)
@@ -424,16 +452,17 @@ while run:
             level = 4
     elif level == 4:
         if not ml2bwall1 in objects:
-            objects = [ml2bwall1,ml2bwall2,ml2bwall3,ml2bwall4,ml2ceiling1,ml2ceil2,ml2ceil3,ml2fwall1,ml2fwall2]
-            tobjects = [ml2floort1,ml2floort2,ml2floort3,ml2floort4,ml2secretfloort1,ml2secretfloort2,ml2secretfloort3,ml2secretfloort4,ml2secretfloort5,ml2secretfloort6,ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
+            objects = [ml2bwall1,ml2bwall2,ml2bwall3,ml2bwall4,ml2ceiling1,ml2ceil2,ml2ceil3,ml2fwall1,ml2fwall2,ml2floort1,ml2floort2,ml2floort3,ml2floort4,ml2secretfloort1,ml2secretfloort2,ml2secretfloort3,ml2secretfloort4,ml2secretfloort5,ml2secretfloort6,ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
+            tobjects = []
             enemies = [ml2enemy1,ml2enemy2,ml2enemy3,ml2enemy4,ml2enemy5,ml2enemy6,ml2enemy7,ml2enemy8,ml2enemy9,ml2enemy10,ml2enemy11]
             projectileenemies = [ml2penemy1,ml2penemy2,ml2penemy3,ml2penemy4,ml2penemy5]
+            senemies = [ml2senemy]
             noncols = [ml2secretar1,ml2secret1,ml2secretar2,ml2secret2,ml2secretar3,ml2secret3,ml2secretar4,ml2secret4,ml2secretar5,ml2secret5,ml2secretar6,ml2secret6]
             aps = [ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
-        if apss == 0:
-            
+        #if apss == 0:
+    
         
-
+    
 
 
     # Check if we're on the screen
@@ -466,14 +495,13 @@ while run:
         return bottomcol
         
 
-        
-    def colt():
-        d = 0
+    
+    def colt(thing):
         collided = False
-        while d < len(tobjects) and collided == False:
-            if player.colliderect(tobjects[d]) == True:
-                collided = True
-            d=1 + d
+        for d in objects:
+            if collided == False:
+                if thing.bottom < d.top + 2 and thing.bottom > d.top - 3 and thing.tx < d.tx + d.width and thing.tx + thing.width > d.tx:
+                    collided = True
 
         return collided
 
@@ -504,7 +532,7 @@ while run:
         slashc = sli * 4
 
 
-    if colt() == False and col() == False:
+    if colt(player) == False and col() == False:
         if ymom < 1:
             ymom += 0.1
 
@@ -512,7 +540,7 @@ while run:
         if event.type == pygame.QUIT:
             run = False
 
-    if key[pygame.K_SPACE] == True and (colt() == True or col() == True) and jcool < 1:
+    if key[pygame.K_SPACE] == True and (colt(player) == True or col() == True) and jcool < 1:
         ymom = -10
         jumps = 1
         jcool = 250
@@ -538,16 +566,18 @@ while run:
         if xmom > -1 and xmom < 1:
             xmom = 0
     else:
-        if col() == False and colt() == False:
+        if col() == False and colt(player) == False:
             for thobject in objects+tobjects+enemies+noncols+projectileenemies+projectiles:
                 thobject.move_ip(0,ymom * -1)
             for thproj in projectiles:
-                thobject.move_ip(0,ymom * 0.1)
+                thproj.move_ip(0,ymom * 0.1)
         else:
-            if colt() == True:
+            if colt(player) == True:
                 if ymom < 0:
                     for thobject in objects+tobjects+enemies+noncols+projectileenemies+projectiles:
                         thobject.move_ip(0,ymom * -1)
+                else:
+                    ymom = 0
             elif bcol() == True:
                 print("bottom col")
                 for thobject in objects+tobjects+enemies+noncols+projectileenemies+projectiles:
@@ -568,18 +598,13 @@ while run:
                         for awall in objects:
                             if anEnemy.colliderect(awall):
                                 anEnemy.move_ip(1,0)
-            cold = 0
-            for atobject in tobjects:
-                if not anEnemy.colliderect(atobject):
-                    cold += 1
-                else:
-                    anEnemy.move_ip(0,-1)
+            if colt(anEnemy) == False:
+                anEnemy.move_ip(0,1)
+            else:
+                anEnemy.move_ip(0,-2)
                 if anEnemy.colliderect(player) and invulnrability < 1 and xmom == 0:
                     soul-=1
                     invulnrability = 3
-            if cold == len(tobjects):
-                anEnemy.move_ip(0,1)
-                print(str(anEnemy)+" is falling.")
             if anEnemy.colliderect(slash) and anEnemy.invulnrabilityc < 1 and slash.hidden == False:
                 anEnemy.health-=sldammage
                 anEnemy.invulnrabilityc=sli
@@ -601,26 +626,23 @@ while run:
             
     for apEnemy in projectileenemies:
         if apEnemy.health > 0:
-            cold = 0
-            for atobject in tobjects:
-                if not apEnemy.colliderect(atobject):
-                    cold += 1
-                else:
-                    apEnemy.move_ip(0,-1)
-
-                if apEnemy.cooldown < 1:
-                    projectile = movable(apEnemy.x,apEnemy.y + 50,10,10)
-                    projectiles.append(projectile)
-                    if apEnemy.x < 900:
-                        projectiles[len(projectiles) - 1].ensxm = 1
-                    else:
-                        projectiles[len(projectiles) - 1].ensxm = -1
-                    apEnemy.cooldown = 10000
-                else:
-                    apEnemy.cooldown -= 1
-
-            if cold == len(tobjects):
+            if colt(apEnemy) == False:
                 apEnemy.move_ip(0,1)
+            else:
+                apEnemy.move_ip(0,-2)
+
+
+            if apEnemy.cooldown < 1:
+                projectile = movable(apEnemy.x,apEnemy.y + 50,10,10)
+                projectiles.append(projectile)
+                if apEnemy.x < 900:
+                    projectiles[len(projectiles) - 1].ensxm = 1
+                else:
+                    projectiles[len(projectiles) - 1].ensxm = -1
+                apEnemy.cooldown = 1000
+            else:
+                apEnemy.cooldown -= 1
+
                 print(str(apEnemy)+" is falling.")
             if apEnemy.colliderect(slash) and apEnemy.invulnrabilityc < 1 and slash.hidden == False:
                 apEnemy.health-=sldammage
@@ -640,6 +662,42 @@ while run:
         else:
             projectileenemies.remove(apEnemy)
             cash+=3
+    for apEnemy in senemies:
+        if apEnemy.health > 0:
+            if colt(apEnemy) == False:
+                apEnemy.move_ip(0,1)
+            else:
+                apEnemy.move_ip(0,-2)
+
+
+            if apEnemy.cooldown < 1:
+                spnden = movable(apEnemy.x,apEnemy.y,10,20)
+                spenemies.append(spnden)
+                spenemies[len(spenemies) - 1].health = 2
+                apEnemy.cooldown = 5000
+            else:
+                apEnemy.cooldown -= 1
+
+                print(str(apEnemy)+" is falling.")
+            if apEnemy.colliderect(slash) and apEnemy.invulnrabilityc < 1 and slash.hidden == False:
+                apEnemy.health-=sldammage
+                apEnemy.invulnrabilityc=sli
+                if xposition < apEnemy.centerx:
+                    apEnemy.ensxm += knockback
+                else:
+                    apEnemy.ensxm -= knockback
+            apEnemy.invulnrabilityc-=1
+            if apEnemy.ensxm>0:
+                apEnemy.ensxm-=0.1
+            elif apEnemy.ensxm<0:
+                apEnemy.ensxm+=0.1
+            if apEnemy.ensxm < 0.1 and apEnemy.ensxm > -0.1:
+                apEnemy.ensxm = 0
+            apEnemy.move_ip(apEnemy.ensxm,0)
+        else:
+            senemies.remove(apEnemy)
+            cash+=5
+
 
     
     if player.colliderect(secret):
@@ -679,6 +737,44 @@ while run:
         for awall in objects:
             if aproj.colliderect(awall):
                 projectiles.remove(aproj)
+    for anEnemy in spenemies:
+        if anEnemy.health > 0:
+            if xposition > anEnemy.centerx - 600 and xposition < anEnemy.centerx + 600 and not anEnemy.colliderect(player):
+                if anEnemy.ensxm == 0:
+                    if anEnemy.centerx<player.left:
+                        anEnemy.move_ip(.5,0)
+                        for awall in objects:
+                            if anEnemy.colliderect(awall):
+                                anEnemy.move_ip(-1,0)
+                    else:
+                        anEnemy.move_ip(-.5,0)
+                        for awall in objects:
+                            if anEnemy.colliderect(awall):
+                                anEnemy.move_ip(1,0)
+            if colt(anEnemy) == False:
+                anEnemy.move_ip(0,1)
+            else:
+                anEnemy.move_ip(0,-2)
+                if anEnemy.colliderect(player) and invulnrability < 1 and xmom == 0:
+                    soul-=1
+                    invulnrability = 3
+            if anEnemy.colliderect(slash) and anEnemy.invulnrabilityc < 1 and slash.hidden == False:
+                anEnemy.health-=sldammage
+                anEnemy.invulnrabilityc=sli
+                if xposition < anEnemy.centerx:
+                    anEnemy.ensxm += knockback * 2
+                else:
+                    anEnemy.ensxm -= knockback * 2
+            anEnemy.invulnrabilityc-=1
+            if anEnemy.ensxm>0:
+                anEnemy.ensxm-=0.1
+            elif anEnemy.ensxm<0:
+                anEnemy.ensxm+=0.1
+            if anEnemy.ensxm < 0.1 and anEnemy.ensxm > -0.1:
+                anEnemy.ensxm = 0
+            anEnemy.move_ip(anEnemy.ensxm,0)
+        else:
+            spenemies.remove(anEnemy)
         
     
     ftc-=1
