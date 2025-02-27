@@ -46,7 +46,10 @@ class movable(pygame.Rect):
         self.move(self.tx,self.ty)
 
 jcool = 0
+platmooveam = 0
+md = 1
 JH = -10
+jable = 0
 boss = 0
 ymom = 0
 dcool = 0
@@ -70,7 +73,7 @@ sldammage = 1
 dash = 12
 platpc = 0
 ftc = 0
-level = -1
+level = -2
 levsave = 0
 ascrollc = 0
 intcool = 0
@@ -195,11 +198,11 @@ ml2secretfloort5 = movable(7000,1000,500,50)
 ml2secretar6 = movable(8300,-2000,500,500)
 ml2secret6 = movable(6000,-1600,50,50)
 ml2secretfloort6 = movable(8300,-1500,500,50)
-ml2plat1 = movable(4200,500,150,50)
-ml2plat2 = movable(3900,100,150,50)
-ml2plat3 = movable(4200,-300,150,50)
-ml2plat4 = movable(3900,-700,150,50)
-ml2plat5 = movable(3900,900,150,50)
+ml2plat1 = movable(4200,700,150,50)
+ml2plat2 = movable(3900,300,150,50)
+ml2plat3 = movable(4200,-100,150,50)
+ml2plat4 = movable(3900,-500,150,50)
+ml2plat5 = movable(3900,1100,150,50)
 ml2enemy1 = movable(400,800,50,100)
 ml2enemy2 = movable(900,800,50,100)
 ml2enemy3 = movable(1800,1300,50,100)
@@ -242,6 +245,13 @@ player_left_image = pygame.transform.flip(player_right_image,True,False)
 run = True
 beelzlbub.health = 90
 
+def colap(cthing):
+    apcol = False
+    for d in aps:
+        if apcol == False:
+            if apcol.colliderect(d):
+                apcol = True
+    return apcol
 
 while run:
     if soul<1:
@@ -484,7 +494,7 @@ while run:
                 beelzlbub.move_ip(0,1)
             else:
                 beelzlbub.move_ip(0,-2)
-            if xposition > beelzlbub.centerx - 120 and xposition < beelzlbub.centerx + 120 and xmom == 0 and beelzlbub.cooldown < 1 and invulnrability < 1 and not beelzlbub.colliderect(player):
+            if xposition > beelzlbub.centerx - 120 and xposition < beelzlbub.centerx + 120 and xmom == 0 and beelzlbub.cooldown < 1 and invulnrability < 1:
                 if beelzlbub.centerx>player.left:
                     attack = movable(beelzlbub.x - 150,beelzlbub.y + 40,150,5)
                     enatcks.append(attack)
@@ -496,13 +506,13 @@ while run:
             elif beelzlbub.ensxm < 1 and beelzlbub.ensxm > -1 and beelzlbub.cooldown < 1:
                 beelzlbub.y=500
                 if beelzlbub.x < 300 and bdc < 1:
-                    beelzlbub.ensxm = 10
+                    beelzlbub.ensxm = -5
                 elif beelzlbub.x > 1700 and bdc < 1:
-                    beelzlbub.ensxm = -10
+                    beelzlbub.ensxm = 5
                 bdc = 1
-            else:
-                bdc-=1
                 beelzlbub.cooldown = 1500
+            elif not beelzlbub.cooldown < 1:
+                bdc-=1
             bcount = 0
             for anobject in objects:
                 if not beelzlbub.colliderect(anobject):
@@ -575,6 +585,20 @@ while run:
             dashups = [ml2secret3,]
             reapups = [ml2secret4,]
             jumpups = [ml2secret5]
+        if md == 1:
+            for amoplat in aps:
+                amoplat.move_ip(0,-0.5)
+            platmooveam+=1
+        elif md == 0:
+            for amoplat in aps:
+                amoplat.move_ip(0,0.5)
+            platmooveam+=1
+        if platmooveam > 499:
+            if md == 1:
+                md = 0
+            elif md == 0:
+                md = 1
+            platmooveam = platmooveam-500
         #if apss == 0:
     
         
@@ -592,13 +616,12 @@ while run:
         player.y = Screen_Hight - 10
     
     
-    def col():
-        i = 0
+    def col(athing):
         colliding = False
-        while i < len(objects) and colliding == False:
-            if player.colliderect(objects[i]) == True:
-                colliding = True
-            i=1 + i
+        for d in objects:
+            if not colliding:
+                if athing.colliderect(d):
+                    colliding = True
         return colliding
     
     
@@ -626,7 +649,7 @@ while run:
         while l < len(objectsList):
             objectsList[l].move_ip(x,0)
             l+=1
-        if col() == True:
+        if col(player) == True:
             l = 0
             while l < len(objectsList):
                 objectsList[l].move_ip(-1.4*x,0)
@@ -645,11 +668,11 @@ while run:
             screen.blit(player_front_image,(885,480))
         if key[pygame.K_e] == True and slashc < 1:
             slashc = sli * 4
-        if colt(player) == False and col() == False:
+        if colt(player) == False and col(player) == False:
             if ymom < 1:
                 ymom += 0.1
 
-        if key[pygame.K_SPACE] == True and (colt(player) == True or col() == True) and jcool < 1 and not key[pygame.K_s] == True:
+        if key[pygame.K_SPACE] == True and (colt(player) == True or col(player) == True or jable>0) and jcool < 1 and not key[pygame.K_s] == True:
             ymom = JH
             jumps = mjs
             jcool = 250
@@ -676,7 +699,7 @@ while run:
         if xmom > -1 and xmom < 1:
             xmom = 0
     else:
-        if col() == False and colt(player) == False:
+        if col(player) == False and colt(player) == False:
             for thobject in objects+enemies+noncols+projectileenemies+projectiles:
                 thobject.move_ip(0,ymom * -1)
             for thproj in projectiles:
@@ -684,10 +707,15 @@ while run:
         else:
             if colt(player) == True:
                 if ymom < 0:
-                    for thobject in objects+enemies+noncols+projectileenemies+projectiles:
+                    jable = 2
+                    for thobject in objects+enemies+noncols+projectileenemies+projectiles+aps:
                         thobject.move_ip(0,ymom * -1)
                 else:
                     ymom = 0
+                    jable = 2
+                    if colap:
+                        for thobject in objects+enemies+noncols+projectileenemies+projectiles:
+                            thobject.move_ip(0,0.6)
             else:
                 for thobject in objects+enemies+noncols+projectileenemies+projectiles:
                     thobject.move_ip(0,-+1)
@@ -983,6 +1011,7 @@ while run:
     ftc-=1
     jcool-=1
     soulc-=1
+    jable-=1
     slashc-=1
     intcool-=1
     invulnrability-=1
