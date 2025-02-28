@@ -73,7 +73,7 @@ sldammage = 1
 dash = 12
 platpc = 0
 ftc = 0
-level = -2
+level = -1
 levsave = 0
 ascrollc = 0
 intcool = 0
@@ -249,7 +249,7 @@ def colap(cthing):
     apcol = False
     for d in aps:
         if apcol == False:
-            if apcol.colliderect(d):
+            if cthing.colliderect(d):
                 apcol = True
     return apcol
 
@@ -657,18 +657,18 @@ while run:
 
     if interacting == False:
         if key[pygame.K_a] == True and not key[pygame.K_s] == True:
-            screen.blit(player_left_image,(900,480))
+            screen.blit(player_left_image,(885,480))
             moveObjsX(objects + enemies + noncols + projectileenemies + projectiles,1)
             facing = 0
         elif key[pygame.K_d] == True and not key[pygame.K_s] == True:
-            screen.blit(player_right_image,(900,480))
+            screen.blit(player_right_image,(885,480))
             moveObjsX(objects + enemies + noncols + projectileenemies + projectiles,-1)
             facing = 1
         else:
             screen.blit(player_front_image,(885,480))
         if key[pygame.K_e] == True and slashc < 1:
             slashc = sli * 4
-        if colt(player) == False and col(player) == False:
+        if colt(player) == False and col(player) == False and jable < 1:
             if ymom < 1:
                 ymom += 0.1
 
@@ -711,15 +711,17 @@ while run:
                     for thobject in objects+enemies+noncols+projectileenemies+projectiles+aps:
                         thobject.move_ip(0,ymom * -1)
                 else:
-                    ymom = 0
                     jable = 2
-                    if colap:
+                    if colap(player):
                         for thobject in objects+enemies+noncols+projectileenemies+projectiles:
                             thobject.move_ip(0,0.6)
+                            print("apcol")
             else:
                 for thobject in objects+enemies+noncols+projectileenemies+projectiles:
-                    thobject.move_ip(0,-+1)
+                    thobject.move_ip(0,-1)
                     ymom = 0
+                    print("napcol")
+                    jable = 2
 
 
 
