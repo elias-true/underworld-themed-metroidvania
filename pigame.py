@@ -22,6 +22,7 @@ class movable(pygame.Rect):
     hidden = False
     ensxm = 0
     ensym = 0
+    alr = 0
     cooldown = 0
     slashlife = 40
     initback = None
@@ -71,6 +72,7 @@ dashblock = False
 slashc = 0
 sldammage = 1
 dash = 12
+b2d = 0
 platpc = 0
 ftc = 0
 level = -1
@@ -81,6 +83,7 @@ rncad = 0
 ft = 1
 ft0 = 1
 ft1 = 1
+b2b = False
 ft2 = 1
 ft3 = 1
 ft4 = 1
@@ -90,6 +93,7 @@ ft5 = 1
 ft6 = 1
 ft7 = 1
 bdc = 0
+intc=0
 poisonc = 300
 max_soul = 100
 soul_gain = 1
@@ -98,6 +102,7 @@ apsh = 0
 apss = 0
 introt = 0
 invulnrability = 0
+
 b1b = False
 tutorialfont = pygame.font.SysFont(None,40)
 
@@ -221,6 +226,13 @@ ml2penemy4 = movable(9200,900,50,100)
 ml2penemy5 = movable(9500,900,50,100)
 ml2senemy = movable(9600,900,50,100)
 lostsoul1 = movable(2000,900,60,110)
+l2bfloort = movable(0,1000,2000,50)
+l2bbwall = movable(0,0,50,1000)
+l2bfwall = movable(2000,0,50,1000)
+l2bceil = movable(0,0,2000,50)
+clotho = movable(500,500,30,110)
+lachesis = movable(300,500,50,80)
+atropos = movable(150,500,50,100)
 
 objects = []
 enemies = []
@@ -238,12 +250,17 @@ dashups = []
 soulups = []
 reapups = []
 jumpups = []
+fatcks = []
+statcks = []
 player_front_image = pygame.image.load("player_front.gif")
 player_right_image = pygame.image.load("player_right.gif")
 player_left_image = pygame.transform.flip(player_right_image,True,False)
 
 run = True
 beelzlbub.health = 90
+clotho.health = 40
+atropos.health = 40
+lachesis.health = 40
 
 def colap(cthing):
     apcol = False
@@ -293,6 +310,10 @@ while run:
     for spawneden in spenemies:
         pygame.draw.rect(screen,(150,0,0),spawneden)
     for antack in enatcks:
+        pygame.draw.rect(screen,(100,0,150),antack)
+    for antack in statcks:
+        pygame.draw.rect(screen,(100,0,150),antack)
+    for antack in fatcks:
         pygame.draw.rect(screen,(100,0,150),antack)
 
     #pygame.draw.circle(screen,(255,0,0),player.center,40)
@@ -499,7 +520,7 @@ while run:
                     attack = movable(beelzlbub.x - 150,beelzlbub.y + 40,150,5)
                     enatcks.append(attack)
                 else:
-                    attack = movable(beelzlbub.x + 200,beelzlbub.y + 40,150,5)
+                    attack = movable(beelzlbub.x + 150,beelzlbub.y + 40,150,5)
                     enatcks.append(attack)
                 beelzlbub.cooldown = 800
                 enatcks[len(enatcks) - 1].slashlife = 150
@@ -581,9 +602,9 @@ while run:
             noncols = [ml2secretar1,ml2secret1,ml2secretar2,ml2secret2,ml2secretar3,ml2secret3,ml2secretar4,ml2secret4,ml2secretar5,ml2secret5,ml2secretar6,ml2secret6]
             aps = [ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
             soulups = [ml2secret1,ml2secret6]
-            slashups = [ml2secret2,]
-            dashups = [ml2secret3,]
-            reapups = [ml2secret4,]
+            slashups = [ml2secret2]
+            dashups = [ml2secret3]
+            reapups = [ml2secret4]
             jumpups = [ml2secret5]
         if md == 1:
             for amoplat in aps:
@@ -599,7 +620,173 @@ while run:
             elif md == 0:
                 md = 1
             platmooveam = platmooveam-500
-        #if apss == 0:
+        if ml2bwall1.centerx < -9600:
+            text = tutorialfont.render('w to travel to the next level',True,(0,0,0),(255,255,255))
+            screen.blit(text,(900,200))
+            if key[pygame.K_w] == True:
+                level = 5
+    elif level == 5:
+        objects = [l2bfloort,l2bbwall,l2bfwall,l2bceil]
+        noncols = [atropos,lachesis,clotho]
+        if clotho.health > 0:
+            pygame.draw.rect(screen,(255,0,0),clotho)
+            if xposition > clotho.centerx - 800 and xposition < clotho.centerx + 800 and not clotho.colliderect(player):
+                if clotho.ensxm == 0:
+                    if clotho.centerx<player.left:
+                        clotho.move_ip(.7,0)
+                        for awall in objects:
+                            if clotho.colliderect(awall):
+                                clotho.move_ip(-1,0)
+                    else:
+                        clotho.move_ip(-.7,0)
+                        for awall in objects:
+                            if clotho.colliderect(awall):
+                                clotho.move_ip(1,0)
+            if colt(clotho) == False:
+                clotho.move_ip(0,1)
+            else:
+                clotho.move_ip(0,-2)
+            if xposition > clotho.centerx - 70 and xposition < clotho.centerx + 70 and xmom == 0 and clotho.cooldown < 1 and invulnrability < 1:
+                if clotho.centerx>player.left:
+                    attack = movable(clotho.x - 70,clotho.y + 40,5,50)
+                    fatcks.append(attack)
+                    fatcks[len(fatcks) - 1].alr = -1
+                else:
+                    attack = movable(clotho.x + 70,clotho.y + 40,5,50)
+                    fatcks.append(attack)
+                clotho.cooldown = 300
+                fatcks[len(fatcks) - 1].slashlife = 90
+            elif clotho.centerx>player.left and not clotho.cooldown < 1:
+                clotho.move_ip(0.8,0)
+                for awall in objects:
+                    if clotho.colliderect(awall):
+                        clotho.move_ip(-1,0)
+            elif clotho.centerx<player.left and not clotho.cooldown < 1:
+                clotho.move_ip(-0.8,0)
+                for awall in objects:
+                    if clotho.colliderect(awall):
+                        clotho.move_ip(1,0)
+            if clotho.colliderect(player):
+                soul-=1
+            if clotho.colliderect(slash) and clotho.invulnrabilityc < 1 and slash.hidden == False:
+                clotho.health-=sldammage
+                clotho.invulnrabilityc=sli
+            if clotho.colliderect(soulreap) and clotho.srinvulnrabilityc < 1 and soulreap.hidden == False:
+                clotho.health-=souldammage
+                soul+=souldammage*2
+                clotho.srinvulnrabilityc=5000
+            clotho.invulnrabilityc-=1
+            clotho.srinvulnrabilityc -= 1
+            clotho.cooldown-=1
+        else:
+            b2d += 1
+        if lachesis.health > 0:
+            pygame.draw.rect(screen,(0,255,0),lachesis)
+            if xposition > lachesis.centerx - 800 and xposition < lachesis.centerx + 800 and not lachesis.colliderect(player):
+                if lachesis.ensxm == 0:
+                    if lachesis.centerx<player.left:
+                        lachesis.move_ip(.5,0)
+                        for awall in objects:
+                            if lachesis.colliderect(awall):
+                                lachesis.move_ip(-1,0)
+                    else:
+                        lachesis.move_ip(-.5,0)
+                        for awall in objects:
+                            if lachesis.colliderect(awall):
+                                lachesis.move_ip(1,0)
+            if colt(lachesis) == False:
+                lachesis.move_ip(0,1)
+            else:
+                lachesis.move_ip(0,-2)
+            if xposition > lachesis.centerx - 150 and xposition < lachesis.centerx + 150 and xmom == 0 and lachesis.cooldown < 1 and invulnrability < 1:
+                if lachesis.centerx>player.left:
+                    attack = movable(lachesis.x - 150,lachesis.y + 40,5,50)
+                    fatcks.append(attack)
+                    fatcks[len(fatcks) - 1].alr = -1
+                else:
+                    attack = movable(lachesis.x + 150,lachesis.y + 40,5,50)
+                    fatcks.append(attack)
+                lachesis.cooldown = 1500
+                fatcks[len(fatcks) - 1].slashlife = 300
+            elif lachesis.centerx>player.left and not lachesis.cooldown < 1:
+                lachesis.move_ip(0.6,0)
+                for awall in objects:
+                    if lachesis.colliderect(awall):
+                        lachesis.move_ip(-1,0)
+            elif lachesis.centerx<player.left and not lachesis.cooldown < 1:
+                lachesis.move_ip(-0.6,0)
+                for awall in objects:
+                    if lachesis.colliderect(awall):
+                        lachesis.move_ip(1,0)
+            if lachesis.colliderect(player):
+                soul-=1
+            if lachesis.colliderect(slash) and lachesis.invulnrabilityc < 1 and slash.hidden == False:
+                lachesis.health-=sldammage
+                lachesis.invulnrabilityc=sli
+            if lachesis.colliderect(soulreap) and lachesis.srinvulnrabilityc < 1 and soulreap.hidden == False:
+                lachesis.health-=souldammage
+                soul+=souldammage*2
+                lachesis.srinvulnrabilityc=5000
+            lachesis.invulnrabilityc-=1
+            lachesis.srinvulnrabilityc -= 1
+            lachesis.cooldown-=1
+        else:
+            b2d += 1
+        if atropos.health > 0:
+            pygame.draw.rect(screen,(0,0,255),atropos)
+            if xposition > atropos.centerx - 800 and xposition < atropos.centerx + 800 and not atropos.colliderect(player):
+                if atropos.ensxm == 0:
+                    if atropos.centerx<player.left:
+                        atropos.move_ip(.3,0)
+                        for awall in objects:
+                            if atropos.colliderect(awall):
+                                atropos.move_ip(-1,0)
+                    else:
+                        atropos.move_ip(-.3,0)
+                        for awall in objects:
+                            if atropos.colliderect(awall):
+                                atropos.move_ip(1,0)
+            if colt(atropos) == False:
+                atropos.move_ip(0,1)
+            else:
+                atropos.move_ip(0,-2)
+            if xposition > atropos.centerx - 150 and xposition < atropos.centerx + 150 and xmom == 0 and atropos.cooldown < 1 and invulnrability < 1:
+                if atropos.centerx>player.left:
+                    attack = movable(atropos.x - 150,atropos.y + 40,5,50)
+                    statcks.append(attack)
+                else:
+                    attack = movable(atropos.x + 150,atropos.y + 40,5,50)
+                    statcks.append(attack)
+                atropos.cooldown = 1500
+                statcks[len(statcks) - 1].slashlife = 100
+            elif atropos.centerx>player.left and not atropos.cooldown < 1:
+                atropos.move_ip(0.5,0)
+                for awall in objects:
+                    if atropos.colliderect(awall):
+                        atropos.move_ip(-1,0)
+            elif atropos.centerx<player.left and not atropos.cooldown < 1:
+                atropos.move_ip(-0.5,0)
+                for awall in objects:
+                    if atropos.colliderect(awall):
+                        atropos.move_ip(1,0)
+            if atropos.colliderect(player):
+                soul-=1
+            if atropos.colliderect(slash) and atropos.invulnrabilityc < 1 and slash.hidden == False:
+                atropos.health-=sldammage
+                atropos.invulnrabilityc=sli
+            if atropos.colliderect(soulreap) and atropos.srinvulnrabilityc < 1 and soulreap.hidden == False:
+                atropos.health-=souldammage
+                soul+=souldammage*2
+                atropos.srinvulnrabilityc=5000
+            atropos.invulnrabilityc-=1
+            atropos.srinvulnrabilityc-=1
+            atropos.cooldown-=1
+        else:
+            b2d += 1
+        if b2d == 3:
+            b2b = True
+            level = 6
+
     
         
     
@@ -691,7 +878,7 @@ while run:
     else:
         screen.blit(player_front_image,(885,480))
     if not xmom == 0:
-        moveObjsX(objects + enemies + noncols + projectileenemies + projectiles,xmom)
+        moveObjsX(objects + enemies + noncols + projectileenemies + projectiles + enatcks + fatcks,xmom)
         if xmom > 0:
             xmom-=0.2
         else:
@@ -700,7 +887,7 @@ while run:
             xmom = 0
     else:
         if col(player) == False and colt(player) == False:
-            for thobject in objects+enemies+noncols+projectileenemies+projectiles:
+            for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks:
                 thobject.move_ip(0,ymom * -1)
             for thproj in projectiles:
                 thproj.move_ip(0,ymom * 0.1)
@@ -708,16 +895,16 @@ while run:
             if colt(player) == True:
                 if ymom < 0:
                     jable = 2
-                    for thobject in objects+enemies+noncols+projectileenemies+projectiles+aps:
+                    for thobject in objects+enemies+noncols+projectileenemies+projectiles+aps+enatcks+fatcks:
                         thobject.move_ip(0,ymom * -1)
                 else:
                     jable = 2
                     if colap(player):
-                        for thobject in objects+enemies+noncols+projectileenemies+projectiles:
+                        for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks:
                             thobject.move_ip(0,0.6)
                             print("apcol")
             else:
-                for thobject in objects+enemies+noncols+projectileenemies+projectiles:
+                for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks:
                     thobject.move_ip(0,-1)
                     ymom = 0
                     print("napcol")
@@ -962,6 +1149,28 @@ while run:
                 soul-=1
         else:
             enatcks.remove(anattack)
+    for anfattack in fatcks:
+        if anfattack.slashlife > 0:
+            anfattack.width+=1
+            if anfattack.alr == -1:
+                anfattack.move_ip(-1,0)
+            anfattack.slashlife-=1
+            if anfattack.colliderect(player) and xmom == 0:
+                soul-=1
+        else:
+            fatcks.remove(anfattack)
+    intc = 0
+    for anstattack in statcks:
+        if anstattack.slashlife > 0:
+            anstattack.slashlife-=1
+            if anstattack.colliderect(player) and xmom == 0:
+                interacting = True
+            else:
+                intc += 1
+        else:
+            statcks.remove(anstattack)
+    if intc == len(statcks):
+        interacting = False
     for anEnemy in spenemies:
         if anEnemy.health > 0:
             if xposition > anEnemy.centerx - 600 and xposition < anEnemy.centerx + 600 and not anEnemy.colliderect(player):
