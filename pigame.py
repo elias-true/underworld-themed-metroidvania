@@ -78,12 +78,15 @@ ftc = 0
 level = -1
 levsave = 0
 ascrollc = 0
+interact2ing = False
 intcool = 0
 rncad = 0
 ft = 1
 ft0 = 1
 ft1 = 1
-b2b = False
+b2b1 = False
+b2b2 = False
+b2b3 = False
 ft2 = 1
 ft3 = 1
 ft4 = 1
@@ -105,6 +108,7 @@ invulnrability = 0
 
 b1b = False
 tutorialfont = pygame.font.SysFont(None,40)
+bossfont = pygame.font.SysFont(None,70)
 
 def resetlevel(objects):
     for anobject in objects:
@@ -118,6 +122,7 @@ xposition = 900
 yposition = 500
 player = movable(xposition,yposition - 20,30,60)
 enemy1 = movable(1300,800,50,100)
+spenemy1 = movable(1300,800,50,100)
 enemy2 = movable(2500,100,50,100)
 enemy3 = movable(3400,-400,50,100)
 enemyprojectile = movable(1500,800,50,100)
@@ -258,9 +263,9 @@ player_left_image = pygame.transform.flip(player_right_image,True,False)
 
 run = True
 beelzlbub.health = 90
-clotho.health = 40
-atropos.health = 40
-lachesis.health = 40
+clotho.health = 35
+atropos.health = 35
+lachesis.health = 35
 
 def colap(cthing):
     apcol = False
@@ -292,7 +297,7 @@ while run:
 
     
     key = pygame.key.get_pressed()
-    screen.fill((150,150,150))
+    screen.fill((250,250,250))
     for anmobject in objects:
         pygame.draw.rect(screen,(0,0,0),anmobject)
     for aproj in projectiles:
@@ -381,6 +386,7 @@ while run:
             soulups = [secret]
             slashups = [slashup]
             dashups = [dashup]
+            senemies = [spenemy1]
         if backboard.centerx < -4500:
             text = tutorialfont.render('w to travel to the next level',True,(0,0,0),(255,255,255))
             screen.blit(text,(900,200))
@@ -497,6 +503,8 @@ while run:
         boss = 1
         pygame.draw.rect(screen,(200,0,0),bhealthbar,beelzlbub.health)
         bhealthbar.width = beelzlbub.health * 10
+        text = bossfont.render("beelzlbub, lord of flies",True,(255,100,100),(255,255,255))
+        screen.blit(text,(400,0))
         if beelzlbub.health > 50:
             pygame.draw.rect(screen,(255,0,0),beelzlbub)
             if xposition > beelzlbub.centerx - 800 and xposition < beelzlbub.centerx + 800 and not beelzlbub.colliderect(player):
@@ -628,6 +636,10 @@ while run:
     elif level == 5:
         objects = [l2bfloort,l2bbwall,l2bfwall,l2bceil]
         noncols = [atropos,lachesis,clotho]
+        pygame.draw.rect(screen,(200,0,0),bhealthbar)
+        bhealthbar.width = (clotho.health + lachesis.health + atropos.health) * 8
+        text = bossfont.render("the fates",True,(255,100,100),(255,255,255))
+        screen.blit(text,(400,0))
         if clotho.health > 0:
             pygame.draw.rect(screen,(255,0,0),clotho)
             if xposition > clotho.centerx - 800 and xposition < clotho.centerx + 800 and not clotho.colliderect(player):
@@ -679,7 +691,7 @@ while run:
             clotho.srinvulnrabilityc -= 1
             clotho.cooldown-=1
         else:
-            b2d += 1
+            b2b1 = True
         if lachesis.health > 0:
             pygame.draw.rect(screen,(0,255,0),lachesis)
             if xposition > lachesis.centerx - 800 and xposition < lachesis.centerx + 800 and not lachesis.colliderect(player):
@@ -731,7 +743,7 @@ while run:
             lachesis.srinvulnrabilityc -= 1
             lachesis.cooldown-=1
         else:
-            b2d += 1
+            b2b2 = True
         if atropos.health > 0:
             pygame.draw.rect(screen,(0,0,255),atropos)
             if xposition > atropos.centerx - 800 and xposition < atropos.centerx + 800 and not atropos.colliderect(player):
@@ -750,12 +762,12 @@ while run:
                 atropos.move_ip(0,1)
             else:
                 atropos.move_ip(0,-2)
-            if xposition > atropos.centerx - 150 and xposition < atropos.centerx + 150 and xmom == 0 and atropos.cooldown < 1 and invulnrability < 1:
+            if xposition > atropos.centerx - 120 and xposition < atropos.centerx + 120 and xmom == 0 and atropos.cooldown < 1 and invulnrability < 1:
                 if atropos.centerx>player.left:
-                    attack = movable(atropos.x - 150,atropos.y + 40,5,50)
+                    attack = movable(atropos.x - 150,atropos.y + 40,150,70)
                     statcks.append(attack)
                 else:
-                    attack = movable(atropos.x + 150,atropos.y + 40,5,50)
+                    attack = movable(atropos.x,atropos.y + 40,150,70)
                     statcks.append(attack)
                 atropos.cooldown = 1500
                 statcks[len(statcks) - 1].slashlife = 100
@@ -782,8 +794,8 @@ while run:
             atropos.srinvulnrabilityc-=1
             atropos.cooldown-=1
         else:
-            b2d += 1
-        if b2d == 3:
+            b2b3 = True
+        if b2b1 == True and b2b2 == True and b2b3 == True:
             b2b = True
             level = 6
 
@@ -842,14 +854,14 @@ while run:
                 objectsList[l].move_ip(-1.4*x,0)
                 l+=1
 
-    if interacting == False:
+    if interacting == False and interact2ing == False:
         if key[pygame.K_a] == True and not key[pygame.K_s] == True:
             screen.blit(player_left_image,(885,480))
-            moveObjsX(objects + enemies + noncols + projectileenemies + projectiles,1)
+            moveObjsX(objects + enemies + noncols + projectileenemies + projectiles + enatcks + fatcks + senemies + spenemies,1)
             facing = 0
         elif key[pygame.K_d] == True and not key[pygame.K_s] == True:
             screen.blit(player_right_image,(885,480))
-            moveObjsX(objects + enemies + noncols + projectileenemies + projectiles,-1)
+            moveObjsX(objects + enemies + noncols + projectileenemies + projectiles + enatcks + fatcks + senemies + spenemies,-1)
             facing = 1
         else:
             screen.blit(player_front_image,(885,480))
@@ -878,7 +890,7 @@ while run:
     else:
         screen.blit(player_front_image,(885,480))
     if not xmom == 0:
-        moveObjsX(objects + enemies + noncols + projectileenemies + projectiles + enatcks + fatcks,xmom)
+        moveObjsX(objects + enemies + noncols + projectileenemies + projectiles + enatcks + fatcks + senemies + spenemies,xmom)
         if xmom > 0:
             xmom-=0.2
         else:
@@ -887,7 +899,7 @@ while run:
             xmom = 0
     else:
         if col(player) == False and colt(player) == False:
-            for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks:
+            for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies:
                 thobject.move_ip(0,ymom * -1)
             for thproj in projectiles:
                 thproj.move_ip(0,ymom * 0.1)
@@ -895,16 +907,16 @@ while run:
             if colt(player) == True:
                 if ymom < 0:
                     jable = 2
-                    for thobject in objects+enemies+noncols+projectileenemies+projectiles+aps+enatcks+fatcks:
+                    for thobject in objects+enemies+noncols+projectileenemies+projectiles+aps+enatcks+fatcks+senemies+spenemies:
                         thobject.move_ip(0,ymom * -1)
                 else:
                     jable = 2
                     if colap(player):
-                        for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks:
+                        for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies:
                             thobject.move_ip(0,0.6)
                             print("apcol")
             else:
-                for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks:
+                for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies:
                     thobject.move_ip(0,-1)
                     ymom = 0
                     print("napcol")
@@ -1026,8 +1038,8 @@ while run:
             if apEnemy.cooldown < 1:
                 spnden = movable(apEnemy.x,apEnemy.y,10,20)
                 spenemies.append(spnden)
-                spenemies[len(spenemies) - 1].health = 2
-                apEnemy.cooldown = 5000
+                spenemies[len(spenemies) - 1].health = 1
+                apEnemy.cooldown = 3000
             else:
                 apEnemy.cooldown -= 1
 
@@ -1072,9 +1084,9 @@ while run:
                 intcool = 100
                 interacting = False
         screen.blit(text,(0,200))
-    elif interacting == True:
-        oneteract = 0
-        interacting = False
+#    elif interacting == True:
+#        oneteract = 0
+#        interacting = False
 
         
     for asoul in soulups:
@@ -1164,13 +1176,13 @@ while run:
         if anstattack.slashlife > 0:
             anstattack.slashlife-=1
             if anstattack.colliderect(player) and xmom == 0:
-                interacting = True
+                interact2ing = True
             else:
                 intc += 1
         else:
             statcks.remove(anstattack)
     if intc == len(statcks):
-        interacting = False
+        interact2ing = False
     for anEnemy in spenemies:
         if anEnemy.health > 0:
             if xposition > anEnemy.centerx - 600 and xposition < anEnemy.centerx + 600 and not anEnemy.colliderect(player):
