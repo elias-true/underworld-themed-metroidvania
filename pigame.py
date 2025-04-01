@@ -16,7 +16,7 @@ class movable(pygame.Rect):
         super().__init__(back,top,width,height)
         self.tx = back
         self.ty = top
-    health = 4
+    health = 250
     invulnrabilityc = 0
     srinvulnrabilityc = 0
     hidden = False
@@ -59,18 +59,18 @@ oneteract = 0
 triggert1 = 1
 knockback = 5
 timec = 0
-sli = 50
+sli = 30
 soulrec = 1
 mjs = 1
 time = 0
 triggert2 = 1
 triggert3 = 1
 triggert4 = 1
-souldammage = 10
+souldammage = 1
 triggert5 = 1
 dashblock = False
 slashc = 0
-sldammage = 1
+sldammage = 2
 dash = 12
 b2d = 0
 platpc = 0
@@ -105,6 +105,10 @@ apsh = 0
 apss = 0
 introt = 0
 invulnrability = 0
+projcost = 50
+projdam = 4
+projcool = 0
+mprojcool = 1000
 
 b1b = False
 tutorialfont = pygame.font.SysFont(None,40)
@@ -238,6 +242,34 @@ l2bceil = movable(0,0,2000,50)
 clotho = movable(500,500,30,110)
 lachesis = movable(300,500,50,80)
 atropos = movable(150,500,50,100)
+ml3floort1 = movable(0,1000,3000,50)
+ml3floort2 = movable(3050,-700,2000,50)
+ml3floort3 = movable(4000,1000,2000,50)
+ml3floort4 = movable(-900,-800,3000,50)
+ml3floort5 = movable(0,-2000,2500,50)
+ml3bwall1 = movable(0,0,50,1000)
+ml3bwall2 = movable(2100,-800,50,800)
+ml3bwall3 = movable(-900,-2800,50,2000)
+ml3bwall4 = movable(5000,-700,50,700)
+ml3bwall5 = movable(4000,0,50,1000)
+ml3fwall1 = movable(3000,-700,50,1700)
+ml3fwall2 = movable(6000,-1500,50,2500)
+ml3fwall3 = movable(0,-2000,50,500)
+ml3fwall4 = movable(2500,-2800,50,800)
+ml3ceil1 = movable(0,0,2100,50)
+ml3ceil2 = movable(0,-1500,6000,50)
+ml3ceil3 = movable(4000,0,1000,50)
+ml3ceil4 = movable(-900,-2800,3400,50)
+ml3plat1 = movable(2150,600,200,50)
+ml3plat2 = movable(2400,200,200,50)
+ml3plat3 = movable(2150,-200,200,50)
+ml3plat4 = movable(3100,-600,200,50)
+ml3plat5 = movable(3400,-200,200,50)
+ml3plat6 = movable(3100,200,200,50)
+ml3plat7 = movable(3400,600,200,50)
+ml3plat8 = movable(-300,-1000,200,50)
+ml3plat9 = movable(-600,-1400,200,50)
+ml3plat10 = movable(-300,-1800,200,50)
 
 objects = []
 enemies = []
@@ -257,6 +289,7 @@ reapups = []
 jumpups = []
 fatcks = []
 statcks = []
+plprojectiles = []
 player_front_image = pygame.image.load("player_front.gif")
 player_right_image = pygame.image.load("player_right.gif")
 player_left_image = pygame.transform.flip(player_right_image,True,False)
@@ -295,7 +328,8 @@ while run:
         battacks = []
         resetlevel(objects)
 
-    
+    dmable = spenemies + senemies + projectileenemies + enemies
+
     key = pygame.key.get_pressed()
     screen.fill((250,250,250))
     for anmobject in objects:
@@ -320,6 +354,8 @@ while run:
         pygame.draw.rect(screen,(100,0,150),antack)
     for antack in fatcks:
         pygame.draw.rect(screen,(100,0,150),antack)
+    for anproj in plprojectiles:
+        pygame.draw.rect(screen,(200,0,0),anproj)
 
     #pygame.draw.circle(screen,(255,0,0),player.center,40)
     
@@ -327,7 +363,7 @@ while run:
     pygame.draw.rect(screen,(200,200,200),soulbar,soul)
     text0 = tutorialfont.render(str(cash),True,(0,0,0),(255,255,255))
     screen.blit(text0,(100,100))
-    if slashc > sli * 3:
+    if slashc > sli * 4:
         slash.hidden = False
         if facing == 1:
             slash.x=player.right
@@ -798,7 +834,19 @@ while run:
         if b2b1 == True and b2b2 == True and b2b3 == True:
             b2b = True
             level = 6
-
+    elif level == 6:
+        if not ml3floort1 in objects:
+            objects = [ml3floort1,ml3floort2,ml3floort3,ml3floort4,ml3floort5,ml3bwall1,ml3bwall2,ml3bwall3,ml3bwall4,ml3bwall5,ml3fwall1,ml3fwall2,ml3fwall3,ml3fwall4,ml3ceil1,ml3ceil2,ml3ceil3,ml3ceil4,ml3plat1,ml3plat2,ml3plat3,ml3plat4,ml3plat5,ml3plat6,ml3plat7,ml3plat8,ml3plat9,ml3plat10]
+            enemies = []
+            projectileenemies = []
+            senemies = []
+            noncols = []
+            aps = [ml3plat1,ml3plat2,ml3plat3,ml3plat4,ml3plat5,ml3plat6,ml3plat7,ml3plat8,ml3plat9,ml3plat10]
+            soulups = []
+            slashups = []
+            dashups = []
+            reapups = []
+            jumpups = []
     
         
     
@@ -866,10 +914,19 @@ while run:
         else:
             screen.blit(player_front_image,(885,480))
         if key[pygame.K_e] == True and slashc < 1:
-            slashc = sli * 4
+            slashc = sli * 5
         if colt(player) == False and col(player) == False and jable < 1:
             if ymom < 1:
                 ymom += 0.1
+        if key[pygame.K_f] == True and projcool < 1 and soul > projcost and b2b == True:
+            player_proj = movable(900,500,30,20)
+            plprojectiles.append(player_proj)
+            if facing == 1:
+                plprojectiles[len(plprojectiles)-1].ensxm = 3
+            else:
+                plprojectiles[len(plprojectiles)-1].ensxm = -3
+            soul-=projcost
+            projcool = mprojcool
 
         if key[pygame.K_SPACE] == True and (colt(player) == True or col(player) == True or jable>0) and jcool < 1 and not key[pygame.K_s] == True:
             ymom = JH
@@ -907,7 +964,7 @@ while run:
             if colt(player) == True:
                 if ymom < 0:
                     jable = 2
-                    for thobject in objects+enemies+noncols+projectileenemies+projectiles+aps+enatcks+fatcks+senemies+spenemies:
+                    for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies:
                         thobject.move_ip(0,ymom * -1)
                 else:
                     jable = 2
@@ -960,27 +1017,17 @@ while run:
                         attack = movable(anEnemy.x + 80,anEnemy.y + 30,80,5)
                         enatcks.append(attack)
                     anEnemy.cooldown = 500
-            if anEnemy.colliderect(slash) and anEnemy.invulnrabilityc < 1 and slash.hidden == False:
-                anEnemy.health-=sldammage
-                anEnemy.invulnrabilityc=sli
-                if xposition < anEnemy.centerx:
-                    anEnemy.ensxm += knockback
-                else:
-                    anEnemy.ensxm -= knockback
-            if anEnemy.colliderect(soulreap) and anEnemy.srinvulnrabilityc < 1 and soulreap.hidden == False:
-                anEnemy.health-=souldammage
-                soul+=souldammage*2
-                anEnemy.srinvulnrabilityc=5000
             anEnemy.cooldown-=1
-            anEnemy.invulnrabilityc-=1
-            anEnemy.srinvulnrabilityc-=1
-            if anEnemy.ensxm>0:
-                anEnemy.ensxm-=0.1
-            elif anEnemy.ensxm<0:
-                anEnemy.ensxm+=0.1
-            if anEnemy.ensxm < 0.1 and anEnemy.ensxm > -0.1:
-                anEnemy.ensxm = 0
-            anEnemy.move_ip(anEnemy.ensxm,0)
+            if not (anEnemy.colliderect(slash) and slash.hidden == False):
+                if anEnemy.ensxm>0:
+                    anEnemy.ensxm-=0.1
+                elif anEnemy.ensxm<0:
+                    anEnemy.ensxm+=0.1
+                if anEnemy.ensxm < 0.1 and anEnemy.ensxm > -0.1:
+                    anEnemy.ensxm = 0
+                anEnemy.move_ip(anEnemy.ensxm,0)
+                if col(anEnemy):
+                    anEnemy.move_ip(anEnemy.ensxm * -2,0)
         else:
             enemies.remove(anEnemy)
             cash+=3
@@ -1005,18 +1052,6 @@ while run:
                 apEnemy.cooldown -= 1
 
                 print(str(apEnemy)+" is falling.")
-            if apEnemy.colliderect(slash) and apEnemy.invulnrabilityc < 1 and slash.hidden == False:
-                apEnemy.health-=sldammage
-                apEnemy.invulnrabilityc=sli
-                if xposition < apEnemy.centerx:
-                    apEnemy.ensxm += knockback
-                else:
-                    apEnemy.ensxm -= knockback
-            if apEnemy.colliderect(soulreap) and apEnemy.srinvulnrabilityc < 1 and soulreap.hidden == False:
-                apEnemy.health-=souldammage
-                soul+=souldammage*2
-                apEnemy.srinvulnrabilityc=5000
-            apEnemy.invulnrabilityc-=1
             if apEnemy.ensxm>0:
                 apEnemy.ensxm-=0.1
             elif apEnemy.ensxm<0:
@@ -1024,6 +1059,8 @@ while run:
             if apEnemy.ensxm < 0.1 and apEnemy.ensxm > -0.1:
                 apEnemy.ensxm = 0
             apEnemy.move_ip(apEnemy.ensxm,0)
+            if col(anEnemy):
+                anEnemy.move_ip(anEnemy.ensxm * -2,0)
         else:
             projectileenemies.remove(apEnemy)
             cash+=3
@@ -1044,26 +1081,16 @@ while run:
                 apEnemy.cooldown -= 1
 
                 print(str(apEnemy)+" is falling.")
-            if apEnemy.colliderect(slash) and apEnemy.invulnrabilityc < 1 and slash.hidden == False:
-                apEnemy.health-=sldammage
-                apEnemy.invulnrabilityc=sli
-                if xposition < apEnemy.centerx:
-                    apEnemy.ensxm += knockback
-                else:
-                    apEnemy.ensxm -= knockback
-            if apEnemy.colliderect(soulreap) and apEnemy.srinvulnrabilityc < 1 and soulreap.hidden == False:
-                apEnemy.health-=souldammage
-                soul+=souldammage*2
-                apEnemy.srinvulnrabilityc=5000
-            apEnemy.invulnrabilityc-=1
-            apEnemy.srinvulnrabilityc-=1
-            if apEnemy.ensxm>0:
-                apEnemy.ensxm-=0.1
-            elif apEnemy.ensxm<0:
-                apEnemy.ensxm+=0.1
-            if apEnemy.ensxm < 0.1 and apEnemy.ensxm > -0.1:
-                apEnemy.ensxm = 0
-            apEnemy.move_ip(apEnemy.ensxm,0)
+            if not (apEnemy.colliderect(slash) and slash.hidden == False):
+                if apEnemy.ensxm>0:
+                    apEnemy.ensxm-=0.1
+                elif apEnemy.ensxm<0:
+                    apEnemy.ensxm+=0.1
+                if apEnemy.ensxm < 0.1 and apEnemy.ensxm > -0.1:
+                    apEnemy.ensxm = 0
+                apEnemy.move_ip(apEnemy.ensxm,0)
+                if col(anEnemy):
+                    anEnemy.move_ip(anEnemy.ensxm * -2,0)
         else:
             senemies.remove(apEnemy)
             cash+=5
@@ -1116,7 +1143,6 @@ while run:
                 screen.blit(text,(900,200))
                 if key[pygame.K_w] == True and cash > 5:
                     sldammage+=1
-                    sli-=10
                     knockback+=1
                     cash-=6
                     noncols.remove(aslsh)
@@ -1134,7 +1160,6 @@ while run:
                 text = tutorialfont.render('w to pick up for 9 cash',True,(0,0,0),(255,255,255))
                 screen.blit(text,(900,200))
                 if key[pygame.K_w] == True and cash > 8:
-                    sldammage+=1
                     JH-=1
                     mjs += 1
                     cash-=9
@@ -1204,31 +1229,44 @@ while run:
                 if anEnemy.colliderect(player) and invulnrability < 1 and xmom == 0:
                     soul-=1
                     invulnrability = 3
-            if anEnemy.colliderect(slash) and anEnemy.invulnrabilityc < 1 and slash.hidden == False:
-                anEnemy.health-=sldammage
-                anEnemy.invulnrabilityc=sli
-                if xposition < anEnemy.centerx:
-                    anEnemy.ensxm += knockback * 2
-                else:
-                    anEnemy.ensxm -= knockback * 2
-            if anEnemy.colliderect(soulreap) and anEnemy.srinvulnrabilityc < 1 and soulreap.hidden == False:
-                anEnemy.health-=souldammage
-                soul+=souldammage*2
-                anEnemy.srinvulnrabilityc=5000
-            anEnemy.invulnrabilityc-=1
-            anEnemy.srinvulnrabilityc-=1
-            if anEnemy.ensxm>0:
-                anEnemy.ensxm-=0.1
-            elif anEnemy.ensxm<0:
-                anEnemy.ensxm+=0.1
-            if anEnemy.ensxm < 0.1 and anEnemy.ensxm > -0.1:
-                anEnemy.ensxm = 0
-            anEnemy.move_ip(anEnemy.ensxm,0)
+            if not (anEnemy.colliderect(slash) and slash.hidden == False):
+                if anEnemy.ensxm>0:
+                    anEnemy.ensxm-=0.1
+                elif anEnemy.ensxm<0:
+                    anEnemy.ensxm+=0.1
+                if anEnemy.ensxm < 0.1 and anEnemy.ensxm > -0.1:
+                    anEnemy.ensxm = 0
+                anEnemy.move_ip(anEnemy.ensxm,0)
+                if col(anEnemy):
+                    anEnemy.move_ip(anEnemy.ensxm * -2,0)
         else:
             rems.append(anEnemy)
     for arem in rems:
         spenemies.remove(arem)
     rems = []
+
+    for adma in dmable:
+        if adma.colliderect(slash) and slash.hidden == False:
+            adma.health-=sldammage
+            if facing == 1:
+                adma.ensxm = 5
+            else:
+                adma.ensxm = -5
+        if adma.colliderect(soulreap) and soulreap.hidden == False:
+            adma.health-=souldammage
+            soul+=souldammage
+        for aplproj in plprojectiles:
+            if adma.colliderect(aplproj):
+                adma.health-=projdam
+    
+    for aplproj in plprojectiles:
+        aplproj.move_ip(aplproj.ensxm,0)
+        for awall in objects:
+            if aplproj.colliderect(awall):
+                rems.append(aplproj)
+    while len(rems) > 0:
+        plprojectiles.remove(rems[0])
+        rems.remove(rems[0])
         
     
     ftc-=1
@@ -1240,13 +1278,14 @@ while run:
     invulnrability-=1
     dcool-=1
     soulrec-=1
+    projcool-=1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
     if soulc < 1 and soul < max_soul:
         if key[pygame.K_s] == True:
             soul+=soul_gain
-            soulc = 16
+            soulc = 20
     soulbar.width = soul
     #timekeep.sleep(0.005)
 
