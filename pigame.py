@@ -75,7 +75,7 @@ dash = 12
 b2d = 0
 platpc = 0
 ftc = 0
-level = -1
+level = 6
 levsave = 0
 ascrollc = 0
 interact2ing = False
@@ -263,13 +263,20 @@ ml3ceil4 = movable(-900,-2800,3400,50)
 ml3plat1 = movable(2150,600,200,50)
 ml3plat2 = movable(2400,200,200,50)
 ml3plat3 = movable(2150,-200,200,50)
-ml3plat4 = movable(3100,-600,200,50)
-ml3plat5 = movable(3400,-200,200,50)
-ml3plat6 = movable(3100,200,200,50)
-ml3plat7 = movable(3400,600,200,50)
+ml3plat4 = movable(5100,-600,200,50)
+ml3plat5 = movable(5400,-200,200,50)
+ml3plat6 = movable(5100,200,200,50)
+ml3plat7 = movable(5400,600,200,50)
 ml3plat8 = movable(-300,-1000,200,50)
 ml3plat9 = movable(-600,-1400,200,50)
 ml3plat10 = movable(-300,-1800,200,50)
+ml3enemy1 = movable(2000,800,50,100)
+ml3enemy2 = movable(2250,800,50,100)
+ml3enemy3 = movable(2500,800,50,100)
+ml3stenemy1 = movable(1900,800,50,100)
+ml3penemy1 = movable(2700,800,50,100)
+ml3penemy2 = movable(2900,800,50,100)
+ml3senemy1 = movable(2800,800,50,100)
 
 objects = []
 enemies = []
@@ -290,6 +297,7 @@ jumpups = []
 fatcks = []
 statcks = []
 plprojectiles = []
+stenemies = []
 player_front_image = pygame.image.load("player_front.gif")
 player_right_image = pygame.image.load("player_right.gif")
 player_left_image = pygame.transform.flip(player_right_image,True,False)
@@ -356,6 +364,8 @@ while run:
         pygame.draw.rect(screen,(100,0,150),antack)
     for anproj in plprojectiles:
         pygame.draw.rect(screen,(200,0,0),anproj)
+    for astenemy in stenemies:
+        pygame.draw.rect(screen,(250,0,250),astenemy)
 
     #pygame.draw.circle(screen,(255,0,0),player.center,40)
     
@@ -837,9 +847,10 @@ while run:
     elif level == 6:
         if not ml3floort1 in objects:
             objects = [ml3floort1,ml3floort2,ml3floort3,ml3floort4,ml3floort5,ml3bwall1,ml3bwall2,ml3bwall3,ml3bwall4,ml3bwall5,ml3fwall1,ml3fwall2,ml3fwall3,ml3fwall4,ml3ceil1,ml3ceil2,ml3ceil3,ml3ceil4,ml3plat1,ml3plat2,ml3plat3,ml3plat4,ml3plat5,ml3plat6,ml3plat7,ml3plat8,ml3plat9,ml3plat10]
-            enemies = []
-            projectileenemies = []
-            senemies = []
+            enemies = [ml3enemy1,ml3enemy2,ml3enemy3]
+            projectileenemies = [ml3penemy1,ml3penemy2]
+            senemies = [ml3senemy1]
+            stenemies = [ml3stenemy1]
             noncols = []
             aps = [ml3plat1,ml3plat2,ml3plat3,ml3plat4,ml3plat5,ml3plat6,ml3plat7,ml3plat8,ml3plat9,ml3plat10]
             soulups = []
@@ -1243,6 +1254,61 @@ while run:
             rems.append(anEnemy)
     for arem in rems:
         spenemies.remove(arem)
+    rems = []
+    
+    for anEnemy in stenemies:
+            if anEnemy.health > 0:
+                if xposition > anEnemy.centerx - 600 and xposition < anEnemy.centerx + 600 and not anEnemy.colliderect(player) and anEnemy.cooldown<1:
+                    if anEnemy.ensxm == 0:
+                        if anEnemy.centerx<player.left:
+                            anEnemy.move_ip(.5,0)
+                            for awall in objects:
+                                if anEnemy.colliderect(awall):
+                                    anEnemy.move_ip(-1,0)
+                        else:
+                            anEnemy.move_ip(-.5,0)
+                            for awall in objects:
+                                if anEnemy.colliderect(awall):
+                                    anEnemy.move_ip(1,0)
+                elif xposition < anEnemy.centerx and xposition > anEnemy.centerx - 600 and xposition < anEnemy.centerx + 600:
+                        anEnemy.move_ip(.5,0)
+                        for awall in objects:
+                            if anEnemy.colliderect(awall):
+                                anEnemy.move_ip(-1,0)
+                elif xposition > anEnemy.centerx - 600 and xposition < anEnemy.centerx + 600:
+                    anEnemy.move_ip(-.5,0)
+                    for awall in objects:
+                        if anEnemy.colliderect(awall):
+                            anEnemy.move_ip(1,0)
+                if colt(anEnemy) == False:
+                    anEnemy.move_ip(0,1)
+                else:
+                    anEnemy.move_ip(0,-2)
+                    if xposition > anEnemy.centerx - 70 and xposition < anEnemy.centerx + 70 and xmom == 0 and anEnemy.cooldown < 1 and not anEnemy.colliderect(player) and invulnrability < 1:
+                        if anEnemy.centerx>player.left:
+                            attack = movable(anEnemy.x - 50,anEnemy.y + 30,80,50)
+                            statcks.append(attack)
+                        else:
+                            attack = movable(anEnemy.x + 80,anEnemy.y + 30,80,50)
+                            statcks.append(attack)
+                        statcks[len(statcks) - 1].slashlife = 120
+                        anEnemy.cooldown = 500
+                anEnemy.cooldown-=1
+                if not (anEnemy.colliderect(slash) and slash.hidden == False):
+                    if anEnemy.ensxm>0:
+                        anEnemy.ensxm-=0.1
+                    elif anEnemy.ensxm<0:
+                        anEnemy.ensxm+=0.1
+                    if anEnemy.ensxm < 0.1 and anEnemy.ensxm > -0.1:
+                        anEnemy.ensxm = 0
+                    anEnemy.move_ip(anEnemy.ensxm,0)
+                    if col(anEnemy):
+                        anEnemy.move_ip(anEnemy.ensxm * -2,0)
+            else:
+                rems.append(anEnemy)
+                cash+=3
+    for arem in rems:
+        stenemies.remove(arem)
     rems = []
 
     for adma in dmable:
