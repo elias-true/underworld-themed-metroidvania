@@ -68,6 +68,7 @@ triggert3 = 1
 triggert4 = 1
 souldammage = 1
 triggert5 = 1
+lostsoul_beaten = False
 dashblock = False
 slashc = 0
 sldammage = 2
@@ -277,6 +278,8 @@ ml3stenemy1 = movable(1900,800,50,100)
 ml3penemy1 = movable(2700,800,50,100)
 ml3penemy2 = movable(2900,800,50,100)
 ml3senemy1 = movable(2800,800,50,100)
+lostsoul = movable(4200,880,60,120)
+blockwall = movable(5000,-1500,50,800)
 
 objects = []
 enemies = []
@@ -298,6 +301,7 @@ fatcks = []
 statcks = []
 plprojectiles = []
 stenemies = []
+invisis = []
 player_front_image = pygame.image.load("player_front.gif")
 player_right_image = pygame.image.load("player_right.gif")
 player_left_image = pygame.transform.flip(player_right_image,True,False)
@@ -307,6 +311,7 @@ beelzlbub.health = 90
 clotho.health = 35
 atropos.health = 35
 lachesis.health = 35
+lostsoul.health = 1800
 
 def colap(cthing):
     apcol = False
@@ -336,7 +341,8 @@ while run:
         battacks = []
         resetlevel(objects)
 
-    dmable = spenemies + senemies + projectileenemies + enemies
+    dmable = spenemies + senemies + projectileenemies + enemies + stenemies + lostsoul + clotho + lachesis + atropos + beelzlbub
+    mable = objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies+stenemies+invisis
 
     key = pygame.key.get_pressed()
     screen.fill((250,250,250))
@@ -433,6 +439,8 @@ while run:
             slashups = [slashup]
             dashups = [dashup]
             senemies = [spenemy1]
+            stenemies = []
+            invisis = []
         if backboard.centerx < -4500:
             text = tutorialfont.render('w to travel to the next level',True,(0,0,0),(255,255,255))
             screen.blit(text,(900,200))
@@ -513,6 +521,8 @@ while run:
         projectiles = []
         projectileenemies = []
         aps = []
+        stenemies = []
+        invisis = []
         text = tutorialfont.render('escape',True,(255,0,0),(255,255,255))
         screen.blit(text,(900,200))
         pygame.draw.rect(screen,(200,0,0),timebar,time)
@@ -851,13 +861,25 @@ while run:
             projectileenemies = [ml3penemy1,ml3penemy2]
             senemies = [ml3senemy1]
             stenemies = [ml3stenemy1]
-            noncols = []
+            noncols = [lostsoul]
             aps = [ml3plat1,ml3plat2,ml3plat3,ml3plat4,ml3plat5,ml3plat6,ml3plat7,ml3plat8,ml3plat9,ml3plat10]
             soulups = []
             slashups = []
             dashups = []
             reapups = []
             jumpups = []
+            invisis = [blockwall]
+        if player.x > ml3floort3.x and player.y > ml3floort3.y - 100 and player.x < ml3floort3.x + 1000 and lostsoul_beaten == False:
+            if not blockwall in objects:
+                objects.append(blockwall)
+                invisis.remove(blockwall)
+                print("lsfv")
+            pygame.draw.rect(screen,(0,0,150),lostsoul)
+            if lostsoul.health > 0:
+                if lostsoul.health < 800:
+                    atcoice = random.randint(1,5)
+                else:
+                    atchoice = random.randint(1,3)
     
         
     
@@ -916,11 +938,11 @@ while run:
     if interacting == False and interact2ing == False:
         if key[pygame.K_a] == True and not key[pygame.K_s] == True:
             screen.blit(player_left_image,(885,480))
-            moveObjsX(objects + enemies + noncols + projectileenemies + projectiles + enatcks + fatcks + senemies + spenemies,1)
+            moveObjsX(mable,1)
             facing = 0
         elif key[pygame.K_d] == True and not key[pygame.K_s] == True:
             screen.blit(player_right_image,(885,480))
-            moveObjsX(objects + enemies + noncols + projectileenemies + projectiles + enatcks + fatcks + senemies + spenemies,-1)
+            moveObjsX(mable,-1)
             facing = 1
         else:
             screen.blit(player_front_image,(885,480))
@@ -958,7 +980,7 @@ while run:
     else:
         screen.blit(player_front_image,(885,480))
     if not xmom == 0:
-        moveObjsX(objects + enemies + noncols + projectileenemies + projectiles + enatcks + fatcks + senemies + spenemies,xmom)
+        moveObjsX(mable,xmom)
         if xmom > 0:
             xmom-=0.2
         else:
@@ -967,7 +989,7 @@ while run:
             xmom = 0
     else:
         if col(player) == False and colt(player) == False:
-            for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies:
+            for thobject in mable:
                 thobject.move_ip(0,ymom * -1)
             for thproj in projectiles:
                 thproj.move_ip(0,ymom * 0.1)
@@ -975,16 +997,16 @@ while run:
             if colt(player) == True:
                 if ymom < 0:
                     jable = 2
-                    for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies:
+                    for thobject in mable:
                         thobject.move_ip(0,ymom * -1)
                 else:
                     jable = 2
                     if colap(player):
-                        for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies:
+                        for thobject in mable:
                             thobject.move_ip(0,0.6)
                             print("apcol")
             else:
-                for thobject in objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies:
+                for thobject in mable:
                     thobject.move_ip(0,-1)
                     ymom = 0
                     print("napcol")
@@ -1062,7 +1084,7 @@ while run:
             else:
                 apEnemy.cooldown -= 1
 
-                print(str(apEnemy)+" is falling.")
+#                print(str(apEnemy)+" is falling.")
             if apEnemy.ensxm>0:
                 apEnemy.ensxm-=0.1
             elif apEnemy.ensxm<0:
@@ -1091,7 +1113,7 @@ while run:
             else:
                 apEnemy.cooldown -= 1
 
-                print(str(apEnemy)+" is falling.")
+#                print(str(apEnemy)+" is falling.")
             if not (apEnemy.colliderect(slash) and slash.hidden == False):
                 if apEnemy.ensxm>0:
                     apEnemy.ensxm-=0.1
