@@ -23,8 +23,11 @@ class movable(pygame.Rect):
     ensxm = 0
     ensym = 0
     alr = 0
+    ppt = False
     cooldown = 0
+    ymom = 0 
     slashlife = 40
+    pdammage = 30
     initback = None
     inittop = None
     
@@ -60,6 +63,7 @@ triggert1 = 1
 knockback = 5
 timec = 0
 sli = 30
+lost_fight = False
 soulrec = 1
 mjs = 1
 time = 0
@@ -83,6 +87,7 @@ interact2ing = False
 intcool = 0
 rncad = 0
 ft = 1
+projss = 0
 ft0 = 1
 ft1 = 1
 b2b1 = False
@@ -97,6 +102,7 @@ ft5 = 1
 ft6 = 1
 ft7 = 1
 bdc = 0
+lost_attack = 0
 intc=0
 poisonc = 300
 max_soul = 100
@@ -302,6 +308,7 @@ statcks = []
 plprojectiles = []
 stenemies = []
 invisis = []
+bosses = [lostsoul, clotho, lachesis, atropos, beelzlbub]
 player_front_image = pygame.image.load("player_front.gif")
 player_right_image = pygame.image.load("player_right.gif")
 player_left_image = pygame.transform.flip(player_right_image,True,False)
@@ -341,7 +348,7 @@ while run:
         battacks = []
         resetlevel(objects)
 
-    dmable = spenemies + senemies + projectileenemies + enemies + stenemies + lostsoul + clotho + lachesis + atropos + beelzlbub
+    dmable = spenemies + senemies + projectileenemies + enemies + stenemies + bosses
     mable = objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies+stenemies+invisis
 
     key = pygame.key.get_pressed()
@@ -376,7 +383,7 @@ while run:
     #pygame.draw.circle(screen,(255,0,0),player.center,40)
     
 
-    pygame.draw.rect(screen,(200,200,200),soulbar,soul)
+    pygame.draw.rect(screen,(200,200,200),soulbar,round(soul))
     text0 = tutorialfont.render(str(cash),True,(0,0,0),(255,255,255))
     screen.blit(text0,(100,100))
     if slashc > sli * 4:
@@ -869,20 +876,96 @@ while run:
             reapups = []
             jumpups = []
             invisis = [blockwall]
-        if player.x > ml3floort3.x and player.y > ml3floort3.y - 100 and player.x < ml3floort3.x + 1000 and lostsoul_beaten == False:
+        if (player.x > ml3floort3.x and player.y > ml3floort3.y - 100 and player.x < ml3floort3.x + 1000 and lostsoul_beaten == False) or lost_fight == True:
             if not blockwall in objects:
                 objects.append(blockwall)
                 invisis.remove(blockwall)
                 print("lsfv")
-            pygame.draw.rect(screen,(0,0,150),lostsoul)
             if lostsoul.health > 0:
-                if lostsoul.health < 800:
+                pygame.draw.rect(screen,(0,0,150),lostsoul)
+                lost_fight = True
+                if lostsoul.health < 1700 and lostsoul.cooldown < 1:
                     atcoice = random.randint(1,5)
                 else:
                     atchoice = random.randint(1,3)
-    
-        
-    
+                if atchoice == 1 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
+                    lostsoul.move(200,500)
+                    lostsoul.ensxm = 15
+                    lost_attack = 1
+                    if lostsoul.health < 1700:
+                        lostsoul.cooldown = 2500
+                    else:
+                        lostsoul.cooldown = 5000
+                elif atchoice == 2 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
+                    lostsoul.move(1600,500)
+                    lostsoul.ensxm = -15
+                    lost_attack = 1
+                    if lostsoul.health < 1700:
+                        lostsoul.cooldown = 1500
+                    else:
+                        lostsoul.cooldown = 3000
+                elif atchoice == 3 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
+                    lostsoul.move(900,0)
+                    lostsoul.ymom = 10
+                    lost_attack = 2
+                    if lostsoul.health < 1700:
+                        lostsoul.cooldown = 2000
+                    else:
+                        lostsoul.cooldown = 4000
+                elif atchoice == 4 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
+                    lostsoul.x = 200
+                    lostsoul.y = 500
+                    projss = 6
+                elif atchoice == 5 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
+                    lostsoul.x = 1600
+                    lostsoul.y = 500
+                    projss = 6
+                else:
+                    lostsoul.cooldown-=1
+                    if lost_attack == 1:
+                        lostsoul.move_ip(lostsoul.ensxm,0)
+                        if lostsoul.colliderect(player):
+                            soul-=0.5*abs(lostsoul.ensxm)
+                    elif lost_attack == 2:
+                        lostsoul.move_ip(0,lostsoul.ymom)
+                        if lostsoul.colliderect(player):
+                            soul-=0.7*abs(lostsoul.ymom)
+                if lostsoul.ensxm > 0:
+                    lostsoul.ensxm-=0.1
+                elif lostsoul.ensxm < 0:
+                    lostsoul.ensxm+=0.1
+                elif lostsoul.ymom < 0:
+                    lostsoul.ymom+=0.1
+                elif lostsoul.ymom > 0:
+                    lostsoul.ymom-=0.1
+                if lostsoul.ensxm > -0.1 and lostsoul.ensxm < 0.1:
+                    lostsoul.ensxm = 0
+                    if lost_attack == 1:
+                        lost_attack = 0
+                if lostsoul.ymom > -0.1 and lostsoul.ymom < 0.1:
+                    lostsoul.ymom = 0
+                    if lost_attack == 2:
+                        lost_attack = 0
+
+                if projss > 0 and lostsoul.cooldown<1:
+                    if projss/2 == int(projss):
+                        lostproj = movable(lostsoul.x,lostsoul.y - 40,20,10)
+                        projectiles.append(lostproj)
+                    else:
+                        lostproj = movable(lostsoul.x,lostsoul.y + 60,20,10)
+                        projectiles.append(lostproj)
+                    projectiles[len(projectiles) - 1].pdammage = 40
+                    projectiles[len(projectiles) - 1].ppt = True
+                    if player.x < lostsoul.x:
+                        projectiles[len(projectiles) - 1].ensxm = -2
+                    else:
+                        projectiles[len(projectiles) - 1].ensxm = 2
+                    projss-=1
+                    lostsoul.cooldown = 500
+
+
+
+
 
 
     # Check if we're on the screen
@@ -1201,12 +1284,20 @@ while run:
     for aproj in projectiles:
         aproj.move_ip(aproj.ensxm,0)
         if player.colliderect(aproj) and xmom == 0:
-            soul-=30
+            soul-=aproj.pdammage
             projectiles.remove(aproj)
         elif aproj in projectiles:
             for awall in objects:
-                if aproj.colliderect(awall):
+                if aproj.colliderect(awall) and aproj.ppt == False:
                     rems.append(aproj)
+            if aproj.x < player.x -2000:
+                rems.append(aproj)
+            elif aproj.x > player.x + 2000:
+                rems.append(aproj)
+            elif aproj.x < player.y -2000:
+                rems.append(aproj)
+            elif aproj.y > player.y + 2000:
+                rems.append(aproj)
     for arem in rems:
         if arem in projectiles:
             projectiles.remove(arem)
