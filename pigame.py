@@ -21,6 +21,7 @@ class movable(pygame.Rect):
     srinvulnrabilityc = 0
     hidden = False
     ensxm = 0
+    wbreak = 0
     ensym = 0
     alr = 0
     coriographs = 0
@@ -79,10 +80,11 @@ dashblock = False
 slashc = 0
 sldammage = 2
 dash = 12
-b2d = 0
+b2b = 0
 platpc = 0
 ftc = 0
-level = 6
+level = -1
+lives = 10
 levsave = 0
 ascrollc = 0
 partam = 0
@@ -321,7 +323,7 @@ beelzlbub.health = 1500
 clotho.health = 1700
 atropos.health = 1700
 lachesis.health = 1700
-lostsoul.health = 1600
+lostsoul.health = 3000
 
 def colap(cthing):
     apcol = False
@@ -335,6 +337,7 @@ while run:
     if soul<1:
         levsave = level
         soul = max_soul
+        lives-=1
         level = 2
         time = 200
         ft7 = 1
@@ -389,6 +392,8 @@ while run:
     pygame.draw.rect(screen,(200,200,200),soulbar,round(soul))
     text0 = tutorialfont.render(str(cash),True,(0,0,0),(255,255,255))
     screen.blit(text0,(100,100))
+    text0 = tutorialfont.render("lives" + str(lives),True,(0,0,0),(255,255,255))
+    screen.blit(text0,(100,150))
     if slashc > sli * 4:
         slash.hidden = False
         if facing == 1:
@@ -542,12 +547,19 @@ while run:
         elif rncad == 0:
             timec-=1
         timebar.width = time
-        if time < 1:
+        if time < 1 or lives < 1:
             run = False
         if deadbwall.left < -1800:
             rncad = 1
-            text = tutorialfont.render("don't fail me again",True,(ft7,ft7,ft7),(255,255,255))
-            screen.blit(text,(900,200))
+            if lives > 5:
+                text = tutorialfont.render("get back up and fight in my name",True,(ft7,ft7,ft7),(255,255,255))
+                screen.blit(text,(900,200))
+            elif lives < 6:
+                text = tutorialfont.render("I cant give You many more of these",True,(ft7,ft7,ft7),(255,255,255))
+                screen.blit(text,(900,200))
+            elif lives < 2:
+                text = tutorialfont.render("don't fail me again",True,(ft7,ft7,ft7),(255,255,255))
+                screen.blit(text,(900,200))
             if ftc < 1:
                 ft7 += 1
                 ftc = 4
@@ -618,10 +630,12 @@ while run:
             beelzlbub.move_ip(beelzlbub.ensxm,0)
             if beelzlbub.colliderect(player) and not beelzlbub.ensxm == 0:
                 soul-=2
-            if beelzlbub.ensxm < -1.1: 
-                beelzlbub.ensxm+=0.1
-            if beelzlbub.ensxm > 1.1: 
-                beelzlbub.ensxm-=0.1
+            if beelzlbub.ensxm < 0: 
+                beelzlbub.ensxm+=0.02
+            if beelzlbub.ensxm > 0: 
+                beelzlbub.ensxm-=0.02
+            if beelzlbub.ensxm > -0.1 and beelzlbub.ensxm < 0.1:
+                beelzlbub.ensxm = 0
             if beelzlbub.colliderect(slash) and beelzlbub.invulnrabilityc < 1 and slash.hidden == False:
                 beelzlbub.health-=sldammage
                 beelzlbub.invulnrabilityc=sli
@@ -893,57 +907,70 @@ while run:
                     atchoice = random.randint(1,3)
                 if atchoice == 1 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
                     lostsoul.move(200,500)
-                    lostsoul.ensxm = 12
-                    lost_attack = 1
                     if lostsoul.health < 1700:
-                        lostsoul.cooldown = 2500
+                        lostsoul.wbreak = 250
                     else:
-                        lostsoul.cooldown = 5000
-                elif atchoice == 2 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
-                    lostsoul.move(1600,500)
-                    lostsoul.ensxm = -12
+                        lostsoul.wbreak = 400
                     lost_attack = 1
+                elif lost_attack == 1 and lostsoul.cooldown < 1 and lostsoul.wbreak < 1:
+                    lostsoul.ensxm = 12
                     if lostsoul.health < 1700:
                         lostsoul.cooldown = 1500
                     else:
-                        lostsoul.cooldown = 3000
+                        lostsoul.cooldown = 2500
+                elif atchoice == 2 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
+                    lostsoul.move(1600,500)
+                    if lostsoul.health < 1700:
+                        lostsoul.wbreak = 250
+                    else:
+                        lostsoul.wbreak = 400
+                    lost_attack = 2
+                elif lost_attack == 2 and lostsoul.cooldown < 1 and lostsoul.wbreak < 1:
+                    lostsoul.ensxm = -12
+                    if lostsoul.health < 1700:
+                        lostsoul.cooldown = 1500
+                    else:
+                        lostsoul.cooldown = 2500
                 elif atchoice == 3 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
                     lostsoul.move(900,0)
+                    lostsoul.wbreak = 200
+                    lost_attack = 3
+                    
+                elif lost_attack == 3 and lostsoul.cooldown < 1 and lostsoul.wbreak < 1:
                     lostsoul.ymom = 8
-                    lost_attack = 2
                     if lostsoul.health < 1700:
                         lostsoul.cooldown = 2000
                     else:
-                        lostsoul.cooldown = 4000
+                        lostsoul.cooldown = 3000
                 elif atchoice == 4 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
-                    lostsoul.x = 200
-                    lostsoul.y = 500
+                    lost_attack = 4
+                    lostsoul.move(200,430)
                     projss = 6
                 elif atchoice == 5 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
-                    lostsoul.x = 1600
-                    lostsoul.y = 500
+                    lost_attack = 5
                     projss = 6
-                elif (atchoice == 6) and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1 and player.x < lostsoul.x + 500 and player.x > lostsoul.x - 500:
-                    lost_attack = 3
+                    lostsoul.move(1600,430)
+                elif (atchoice == 6) and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1 and player.x < lostsoul.x + 600 and player.x > lostsoul.x - 600:
+                    lost_attack = 6
                     lostsoul.coriographs = 100
-                elif lost_attack == 3 and lostsoul.cooldown < 1:
+                elif lost_attack == 6 and lostsoul.cooldown < 1:
                     if lostsoul.coriographs < 1:
-                        lostsoul.coooldown = 600
-                        if player.x < lostsoul.x + 500 and player.x > lostsoul.x - 500 + player.y < lostsoul.y + 500 and player.y > lostsoul.y - 500:
-                            soul-=60
-                            lost_attack == 0
+                        lostsoul.coooldown = 1000
+                        if player.x < lostsoul.x + 700 and player.x > lostsoul.x - 700 + player.y < lostsoul.y + 700 and player.y > lostsoul.y - 700:
+                            soul-=150
+                            lost_attack = 0
                         else:
-                            lost_attack == 0
+                            lost_attack = 0
                     elif lostsoul.cooldown < 1:
                         sigpart = movable(lostsoul.x + random.randint(-300,300), lostsoul.y + random.randint(-300,300), 5, 5)
                         projectiles.append(sigpart)
                         projectiles[len(projectiles) - 1].pdammage = 0
                         projectiles[len(projectiles) - 1].ppt = True
-                        if player.x < lostsoul.x:
+                        if projectiles[len(projectiles) - 1].x > lostsoul.x:
                             projectiles[len(projectiles) - 1].ensxm = -1
                         else:
                             projectiles[len(projectiles) - 1].ensxm = 1
-                        if player.y < lostsoul.y:
+                        if projectiles[len(projectiles) - 1].y > lostsoul.y:
                             projectiles[len(projectiles) - 1].ymom = -1
                         else:
                             projectiles[len(projectiles) - 1].ymom = 1
@@ -951,15 +978,14 @@ while run:
                         lostsoul.cooldown = 10
 
                 else:
-                    lostsoul.cooldown-=1
-                    if lost_attack == 1:
-                        lostsoul.move_ip(lostsoul.ensxm,0)
+                    lostsoul.move_ip(lostsoul.ensxm,0)
+                    if lost_attack == 1 or lost_attack == 2:
                         if lostsoul.colliderect(player):
-                            soul-=0.5*abs(lostsoul.ensxm)
-                    elif lost_attack == 2:
+                            soul-=0.7*abs(lostsoul.ensxm)
+                    elif lost_attack == 3:
                         lostsoul.move_ip(0,lostsoul.ymom)
                         if lostsoul.colliderect(player):
-                            soul-=0.7*abs(lostsoul.ymom)
+                            soul-=0.9*abs(lostsoul.ymom)
                 if lostsoul.ensxm > 0:
                     lostsoul.ensxm-=0.05
                 elif lostsoul.ensxm < 0:
@@ -970,19 +996,21 @@ while run:
                     lostsoul.ymom-=0.05
                 if lostsoul.ensxm > -0.1 and lostsoul.ensxm < 0.1:
                     lostsoul.ensxm = 0
-                    if lost_attack == 1:
+                    if (lost_attack == 1 or lost_attack == 2) and lostsoul.wbreak < 1:
                         lost_attack = 0
                 if lostsoul.ymom > -0.1 and lostsoul.ymom < 0.1:
                     lostsoul.ymom = 0
-                    if lost_attack == 2:
+                    if lost_attack == 3 and lostsoul.wbreak < 1:
                         lost_attack = 0
+                lostsoul.cooldown-=1
+                lostsoul.wbreak-=1
 
                 if projss > 0 and lostsoul.cooldown<1:
-                    if projss/2 == int(projss):
-                        lostproj = movable(lostsoul.x,lostsoul.y - 40,20,10)
+                    if player.x < lostsoul.x:
+                        lostproj = movable(lostsoul.x - 40,lostsoul.y,20,10)
                         projectiles.append(lostproj)
                     else:
-                        lostproj = movable(lostsoul.x,lostsoul.y + 60,20,10)
+                        lostproj = movable(lostsoul.x + 40,lostsoul.y,20,10)
                         projectiles.append(lostproj)
                     projectiles[len(projectiles) - 1].pdammage = 40
                     projectiles[len(projectiles) - 1].ppt = True
@@ -992,6 +1020,8 @@ while run:
                         projectiles[len(projectiles) - 1].ensxm = 2
                     projss-=1
                     lostsoul.cooldown = 500
+                elif lost_attack == 4 or lost_attack == 5:
+                    lost_attack = 0
 
 
 
@@ -1104,8 +1134,6 @@ while run:
         if col(player) == False and colt(player) == False:
             for thobject in mable:
                 thobject.move_ip(0,ymom * -1)
-            for thproj in projectiles:
-                thproj.move_ip(0,ymom * 0.1)
         else:
             if colt(player) == True:
                 if ymom < 0:
@@ -1198,15 +1226,16 @@ while run:
                 apEnemy.cooldown -= 1
 
 #                print(str(apEnemy)+" is falling.")
-            if apEnemy.ensxm>0:
-                apEnemy.ensxm-=0.1
-            elif apEnemy.ensxm<0:
-                apEnemy.ensxm+=0.1
-            if apEnemy.ensxm < 0.1 and apEnemy.ensxm > -0.1:
-                apEnemy.ensxm = 0
-            apEnemy.move_ip(apEnemy.ensxm,0)
-            if col(anEnemy):
-                anEnemy.move_ip(anEnemy.ensxm * -2,0)
+            if not (apEnemy.colliderect(slash) and slash.hidden == False):
+                if apEnemy.ensxm>0:
+                    apEnemy.ensxm-=0.1
+                elif apEnemy.ensxm<0:
+                    apEnemy.ensxm+=0.1
+                if apEnemy.ensxm < 0.1 and apEnemy.ensxm > -0.1:
+                    apEnemy.ensxm = 0
+                apEnemy.move_ip(apEnemy.ensxm,0)
+                if col(apEnemy):
+                    apEnemy.move_ip(apEnemy.ensxm * -2,0)
         else:
             projectileenemies.remove(apEnemy)
             cash+=3
@@ -1235,8 +1264,8 @@ while run:
                 if apEnemy.ensxm < 0.1 and apEnemy.ensxm > -0.1:
                     apEnemy.ensxm = 0
                 apEnemy.move_ip(apEnemy.ensxm,0)
-                if col(anEnemy):
-                    anEnemy.move_ip(anEnemy.ensxm * -2,0)
+                if col(apEnemy):
+                    apEnemy.move_ip(apEnemy.ensxm * -2,0)
         else:
             senemies.remove(apEnemy)
             cash+=5
@@ -1268,8 +1297,8 @@ while run:
                 text = tutorialfont.render('w to pick up for 3 cash',True,(0,0,0),(255,255,255))
                 screen.blit(text,(900,200))
                 if key[pygame.K_w] == True and cash > 2:
-                    max_soul+=50
-                    soul_gain+=1
+                    max_soul+=15
+                    soul_gain+=0.2
                     cash-=3
                     noncols.remove(asoul)
     for adsh in dashups:
@@ -1318,6 +1347,9 @@ while run:
             soul-=aproj.pdammage
             projectiles.remove(aproj)
         elif aproj in projectiles:
+            for aboss in bosses:
+                if aproj.colliderect(aboss):
+                    rems.append(aproj)
             for awall in objects:
                 if aproj.colliderect(awall) and aproj.ppt == False:
                     rems.append(aproj)
@@ -1472,9 +1504,6 @@ while run:
     for aplproj in plprojectiles:
         aplproj.move_ip(aplproj.ensxm,0)
         aplproj.move_ip(0,aplproj.ymom)
-        for aboss in bosses:
-            if aplproj.colliderect(aboss):
-                rems.append(aplproj)
         for awall in objects:
             if aplproj.colliderect(awall):
                 rems.append(aplproj)
