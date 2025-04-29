@@ -60,6 +60,7 @@ boss = 0
 ymom = 0
 dcool = 0
 xmom = 0
+difficuty = 0
 b2b = False
 oneteract = 0
 triggert1 = 1
@@ -68,11 +69,13 @@ timec = 0
 sli = 30
 lost_fight = False
 soulrec = 1
-mjs = 1
+blinkt = 0
 time = 0
+blinktc = 600
 triggert2 = 1
 triggert3 = 1
 triggert4 = 1
+mjs = 1
 souldammage = 1
 triggert5 = 1
 lostsoul_beaten = False
@@ -83,7 +86,7 @@ dash = 12
 b2b = 0
 platpc = 0
 ftc = 0
-level = -1
+level = -4
 lives = 10
 levsave = 0
 ascrollc = 0
@@ -95,12 +98,14 @@ ft = 1
 projss = 0
 ft0 = 1
 ft1 = 1
+dp = 0
 b2b1 = False
 b2b2 = False
 b2b3 = False
 ft2 = 1
 ft3 = 1
 ft4 = 1
+selecting = 1
 interacting = False
 bcount = 0
 ft5 = 1
@@ -121,10 +126,12 @@ projcost = 50
 projdam = 4
 projcool = 0
 mprojcool = 1000
+run = True
 
 b1b = False
 tutorialfont = pygame.font.SysFont(None,40)
 bossfont = pygame.font.SysFont(None,70)
+titlefont = pygame.font.SysFont(None,150)
 
 def resetlevel(objects):
     for anobject in objects:
@@ -136,6 +143,141 @@ s1f = True
 soulc = 0
 xposition = 900
 yposition = 500
+
+def colap(cthing):
+    apcol = False
+    for d in aps:
+        if apcol == False:
+            if cthing.colliderect(d):
+                apcol = True
+    return apcol
+
+while level < -1 and run == True:
+    key = pygame.key.get_pressed()
+    screen.fill((255,255,255))
+    if level == -4:
+        text = titlefont.render('Reapers Quest',True,(0,0,0),(255,255,255))
+        screen.blit(text,(150,200))
+        if selecting == 1:
+            if blinkt == True:
+                text = bossfont.render('<play>',True,(0,0,0),(255,255,255))
+                screen.blit(text,(1472,400))
+            else:
+                text = bossfont.render('play',True,(0,0,0),(255,255,255))
+                screen.blit(text,(1500,400))
+            text = bossfont.render('options',True,(0,0,0),(255,255,255))
+            screen.blit(text,(1500,600))
+            if key[pygame.K_KP_ENTER] == True and dp < 1:
+                level = -3
+                dp = 200
+        else:
+            if blinkt == True:
+                text = bossfont.render('<options>',True,(0,0,0),(255,255,255))
+                screen.blit(text,(1472,600))
+            else:
+                text = bossfont.render('options',True,(0,0,0),(255,255,255))
+                screen.blit(text,(1500,600))
+            text = bossfont.render('play',True,(0,0,0),(255,255,255))
+            screen.blit(text,(1500,400))
+            if key[pygame.K_KP_ENTER] == True and dp < 1:
+                level = -2
+                selecting = 1
+                dp = 200
+    elif level == -3:
+        text = titlefont.render('difficulty',True,(0,0,0),(255,255,255))
+        screen.blit(text,(150,200))
+        if selecting == 1:
+            if blinkt == True:
+                text = bossfont.render('<easy>',True,(0,0,0),(255,255,255))
+                screen.blit(text,(1472,400))
+            else:
+                text = bossfont.render('easy',True,(0,0,0),(255,255,255))
+                screen.blit(text,(1500,400))
+            text = bossfont.render('hard',True,(0,0,0),(255,255,255))
+            screen.blit(text,(1500,600))
+            if key[pygame.K_KP_ENTER] == True and dp < 1:
+                level = -1
+                difficulty = 1
+                dp = 200
+        else:
+            if blinkt == True:
+                text = bossfont.render('<hard>',True,(0,0,0),(255,255,255))
+                screen.blit(text,(1472,600))
+            else:
+                text = bossfont.render('hard',True,(0,0,0),(255,255,255))
+                screen.blit(text,(1500,600))
+            text = bossfont.render('easy',True,(0,0,0),(255,255,255))
+            screen.blit(text,(1500,400))
+            if key[pygame.K_KP_ENTER] == True and dp < 1:
+                level = -1
+                difficulty = 2
+                dp = 200
+    if blinktc < 1:
+        if blinkt == True:
+            blinkt = False
+        else:
+            blinkt = True
+        blinktc = 450
+    blinktc-=1
+    dp-=1
+    if key[pygame.K_DOWN] == True and dp < 1:
+        if selecting == 1:
+            selecting = 2
+        else:
+            selecting = 1
+        dp = 160
+    elif key[pygame.K_UP] == True and dp < 1:
+        if selecting == 1:
+            selecting = 2
+        else:
+            selecting = 1
+        dp = 160
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+    pygame.display.update()
+class movable(pygame.Rect):
+    "these are objects that can be moved and destroyed"
+    def __init__(self,back,top,width,height):
+        self.inittop = top
+        self.initback = back
+        super().__init__(back,top,width,height)
+        self.tx = back
+        self.ty = top
+    health = 250
+    invulnrabilityc = 0
+    srinvulnrabilityc = 0
+    hidden = False
+    ensxm = 0
+    wbreak = 0
+    ensym = 0
+    alr = 0
+    coriographs = 0
+    ppt = False
+    cooldown = 0
+    ymom = 0 
+    slashlife = 40
+    pdammage = 30
+    initback = None
+    inittop = None
+    
+    def move_ip(self,deltaX:float,deltaY:float):
+        self.tx = self.tx+deltaX
+        self.ty = self.ty+deltaY
+        selfAsRect = super()
+        selfAsRect.move_ip(round(self.tx)-selfAsRect.x,round(self.ty)-selfAsRect.y)
+#d        print("moved to "+str(self.tx)+","+str(self.ty))
+
+    def move(self,X:float,Y:float):
+        self.tx = X
+        self.ty = Y
+        selfAsRect = super()
+        selfAsRect.move(round(X),round(Y))
+
+    def resetInitialPosition(self):
+        self.tx = self.initback
+        self.ty = self.inittop
+        self.move(self.tx,self.ty)
 player = movable(xposition,yposition - 20,30,60)
 enemy1 = movable(1300,800,50,100)
 spenemy1 = movable(1300,800,50,100)
@@ -318,20 +460,23 @@ player_front_image = pygame.image.load("player_front.gif")
 player_right_image = pygame.image.load("player_right.gif")
 player_left_image = pygame.transform.flip(player_right_image,True,False)
 
-run = True
-beelzlbub.health = 1500
-clotho.health = 1700
-atropos.health = 1700
-lachesis.health = 1700
-lostsoul.health = 3000
+if difficulty == 1:
+    beelzlbub.health = 1000
+    bbh = 1000
+    clotho.health = 1700
+    atropos.health = 1700
+    lachesis.health = 1700
+    lostsoul.health = 3000
+    benemdm = 1
+else:
+    beelzlbub.health = 1500
+    bbh = 1500
+    clotho.health = 2000
+    atropos.health = 2000
+    lachesis.health = 2000
+    lostsoul.health = 4000
+    bendm = 1.3
 
-def colap(cthing):
-    apcol = False
-    for d in aps:
-        if apcol == False:
-            if cthing.colliderect(d):
-                apcol = True
-    return apcol
 
 while run:
     if soul<1:
@@ -339,7 +484,10 @@ while run:
         soul = max_soul
         lives-=1
         level = 2
-        time = 200
+        if difficulty == 1:
+            time = 220
+        else:
+            time = 170
         ft7 = 1
         rncad = 0
         objects = [deadfwall1,deadbwall,deadceil,deadfwall2,deadfloort,deadfloort2]
@@ -358,7 +506,7 @@ while run:
     mable = objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies+stenemies+invisis
 
     key = pygame.key.get_pressed()
-    screen.fill((250,250,250))
+    screen.fill((255,255,255))
     for anmobject in objects:
         pygame.draw.rect(screen,(0,0,0),anmobject)
     for aproj in projectiles:
@@ -580,10 +728,10 @@ while run:
             projectileenemies = []
         boss = 1
         pygame.draw.rect(screen,(200,0,0),bhealthbar,beelzlbub.health)
-        bhealthbar.width = beelzlbub.health * 10
+        bhealthbar.width = beelzlbub.health
         text = bossfont.render("beelzlbub, lord of flies",True,(255,100,100),(255,255,255))
         screen.blit(text,(400,0))
-        if beelzlbub.health > 50:
+        if beelzlbub.health > bbh/2:
             pygame.draw.rect(screen,(255,0,0),beelzlbub)
             if xposition > beelzlbub.centerx - 800 and xposition < beelzlbub.centerx + 800 and not beelzlbub.colliderect(player):
                 if beelzlbub.ensxm == 0:
@@ -629,7 +777,7 @@ while run:
                 beelzlbub.move_ip(beelzlbub.ensxm,0)
             beelzlbub.move_ip(beelzlbub.ensxm,0)
             if beelzlbub.colliderect(player) and not beelzlbub.ensxm == 0:
-                soul-=2
+                soul-= 1.5 * benemdm
             if beelzlbub.ensxm < 0: 
                 beelzlbub.ensxm+=0.02
             if beelzlbub.ensxm > 0: 
@@ -642,21 +790,24 @@ while run:
             beelzlbub.invulnrabilityc-=1
             beelzlbub.cooldown-=1
         elif beelzlbub.health > 0:
+            if len(aps) == 0:
+                poisonc = 100
+                ymom = -13
             if platpc < 1:
-                beelzplat = movable(bossbwall.x + 500,bossceiling.y,150,50)
+                beelzplat = movable(bossbwall.x + 500,bossceiling.y + 100,150,50)
                 aps.append(beelzplat)
                 platchoice = random.randint(1,2)
                 if platchoice == 1:
                     objects.append(beelzplat)
                 else:
                     noncols.append(beelzplat)
-                beelzplatp2 = movable(bossbwall.x + 1200,bossceiling.y,150,50)
+                beelzplatp2 = movable(bossbwall.x + 1200,bossceiling.y + 100,150,50)
                 aps.append(beelzplatp2)
                 if platchoice == 2:
                     objects.append(beelzplatp2)
                 else:
                     noncols.append(beelzplatp2)
-                platpc = 1000
+                platpc = 1300
             else:
                 platpc-=1
             for abplat in aps:
@@ -674,8 +825,8 @@ while run:
                 ascrollc-=1
             if player.colliderect(bosspoisonfloort):
                 if poisonc < 1:
-#                    soul-=1
-                    print("m")
+                    soul-=10
+                    ymom = -13
                 else:
                     poisonc-=1
         else:
@@ -717,7 +868,7 @@ while run:
         objects = [l2bfloort,l2bbwall,l2bfwall,l2bceil]
         noncols = [atropos,lachesis,clotho]
         pygame.draw.rect(screen,(200,0,0),bhealthbar)
-        bhealthbar.width = (clotho.health + lachesis.health + atropos.health) * 8
+        bhealthbar.width = (clotho.health + lachesis.health + atropos.health)
         text = bossfont.render("the fates",True,(255,100,100),(255,255,255))
         screen.blit(text,(400,0))
         if clotho.health > 0:
@@ -759,7 +910,7 @@ while run:
                     if clotho.colliderect(awall):
                         clotho.move_ip(1,0)
             if clotho.colliderect(player):
-                soul-=1
+                soul-=0.3
             if clotho.colliderect(slash) and clotho.invulnrabilityc < 1 and slash.hidden == False:
                 clotho.health-=sldammage
                 clotho.invulnrabilityc=sli
@@ -811,7 +962,7 @@ while run:
                     if lachesis.colliderect(awall):
                         lachesis.move_ip(1,0)
             if lachesis.colliderect(player):
-                soul-=1
+                soul-=0.3
             if lachesis.colliderect(slash) and lachesis.invulnrabilityc < 1 and slash.hidden == False:
                 lachesis.health-=sldammage
                 lachesis.invulnrabilityc=sli
@@ -862,7 +1013,7 @@ while run:
                     if atropos.colliderect(awall):
                         atropos.move_ip(1,0)
             if atropos.colliderect(player):
-                soul-=1
+                soul-=0.3
             if atropos.colliderect(slash) and atropos.invulnrabilityc < 1 and slash.hidden == False:
                 atropos.health-=sldammage
                 atropos.invulnrabilityc=sli
@@ -944,12 +1095,12 @@ while run:
                         lostsoul.cooldown = 3000
                 elif atchoice == 4 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
                     lost_attack = 4
-                    lostsoul.move(200,430)
+                    lostsoul.move(200,450)
                     projss = 6
                 elif atchoice == 5 and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1:
                     lost_attack = 5
                     projss = 6
-                    lostsoul.move(1600,430)
+                    lostsoul.move(1600,450)
                 elif (atchoice == 6) and lostsoul.cooldown < 1 and lost_attack == 0 and projss < 1 and player.x < lostsoul.x + 600 and player.x > lostsoul.x - 600:
                     lost_attack = 6
                     lostsoul.coriographs = 100
@@ -957,7 +1108,7 @@ while run:
                     if lostsoul.coriographs < 1:
                         lostsoul.coooldown = 1000
                         if player.x < lostsoul.x + 700 and player.x > lostsoul.x - 700 + player.y < lostsoul.y + 700 and player.y > lostsoul.y - 700:
-                            soul-=150
+                            soul-=150 * benemdm
                             lost_attack = 0
                         else:
                             lost_attack = 0
@@ -981,11 +1132,11 @@ while run:
                     lostsoul.move_ip(lostsoul.ensxm,0)
                     if lost_attack == 1 or lost_attack == 2:
                         if lostsoul.colliderect(player):
-                            soul-=0.7*abs(lostsoul.ensxm)
+                            soul-=0.8*abs(lostsoul.ensxm)*benemdm
                     elif lost_attack == 3:
                         lostsoul.move_ip(0,lostsoul.ymom)
                         if lostsoul.colliderect(player):
-                            soul-=0.9*abs(lostsoul.ymom)
+                            soul-=1*abs(lostsoul.ymom)*benemdm
                 if lostsoul.ensxm > 0:
                     lostsoul.ensxm-=0.05
                 elif lostsoul.ensxm < 0:
@@ -1007,10 +1158,10 @@ while run:
 
                 if projss > 0 and lostsoul.cooldown<1:
                     if player.x < lostsoul.x:
-                        lostproj = movable(lostsoul.x - 40,lostsoul.y,20,10)
+                        lostproj = movable(lostsoul.x - 40,lostsoul.y+40,20,10)
                         projectiles.append(lostproj)
                     else:
-                        lostproj = movable(lostsoul.x + 40,lostsoul.y,20,10)
+                        lostproj = movable(lostsoul.x + 70,lostsoul.y + 40,20,10)
                         projectiles.append(lostproj)
                     projectiles[len(projectiles) - 1].pdammage = 40
                     projectiles[len(projectiles) - 1].ppt = True
@@ -1113,13 +1264,13 @@ while run:
             jumps -= 1
             jcool = 250
             soul-=40
-        if key[pygame.K_q] == True and soul > 40 and dcool < 1 and not key[pygame.K_s] == True:
+        if key[pygame.K_q] == True and soul > 20 and dcool < 1 and not key[pygame.K_s] == True:
             if facing == 0:
                 xmom = dash
             if facing == 1:
                 xmom = dash*-1
-            soul -= 40
-            dcool = 100
+            soul -= 20
+            dcool = 500
     else:
         screen.blit(player_front_image,(885,480))
     if not xmom == 0:
@@ -1344,7 +1495,7 @@ while run:
         aproj.move_ip(aproj.ensxm,0)
         aproj.move_ip(0,aproj.ymom)
         if player.colliderect(aproj) and xmom == 0:
-            soul-=aproj.pdammage
+            soul-=aproj.pdammage*benemdm
             projectiles.remove(aproj)
         elif aproj in projectiles:
             for aboss in bosses:
@@ -1370,7 +1521,7 @@ while run:
             anattack.height+=1
             anattack.slashlife-=1
             if anattack.colliderect(player) and xmom == 0:
-                soul-=1
+                soul-=1*benemdm
         else:
             enatcks.remove(anattack)
     for anfattack in fatcks:
@@ -1380,7 +1531,7 @@ while run:
                 anfattack.move_ip(-1,0)
             anfattack.slashlife-=1
             if anfattack.colliderect(player) and xmom == 0:
-                soul-=1
+                soul-=1*benemdm
         else:
             fatcks.remove(anfattack)
     intc = 0
@@ -1414,7 +1565,7 @@ while run:
             else:
                 anEnemy.move_ip(0,-2)
                 if anEnemy.colliderect(player) and invulnrability < 1 and xmom == 0:
-                    soul-=1
+                    soul-=1*benemdm
                     invulnrability = 3
             if not (anEnemy.colliderect(slash) and slash.hidden == False):
                 if anEnemy.ensxm>0:
