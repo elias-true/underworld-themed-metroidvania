@@ -64,6 +64,7 @@ difficuty = 0
 b2b = False
 oneteract = 0
 triggert1 = 1
+stunint = False
 knockback = 5
 timec = 0
 sli = 30
@@ -95,13 +96,16 @@ interact2ing = False
 intcool = 0
 rncad = 0
 ft = 1
+sch1eqa = 0
 projss = 0
+eqmo = False
 ft0 = 1
 ft1 = 1
 dp = 0
 b2b1 = False
 b2b2 = False
 b2b3 = False
+sch1coled = False
 ft2 = 1
 ft3 = 1
 ft4 = 1
@@ -111,6 +115,7 @@ bcount = 0
 ft5 = 1
 ft6 = 1
 ft7 = 1
+ft8 = 1
 bdc = 0
 lost_attack = 0
 intc=0
@@ -320,8 +325,9 @@ ifloort2 = movable(3000,700,1000,50)
 ibackwall2 = movable(2000,0,50,600)
 idjtest = movable(4000,100,50,600)
 idjwalk = movable(4000,100,1000,50)
-idjwalkceiling = movable(4000,-100,2000,50)
-idashtest = movable(5300,100,2500,50)
+idjwalkceiling = movable(4000,-100,4500,50)
+idashtest = movable(5300,100,3200,50)
+istot = movable(8300,-20,40,120)
 deadfloort = movable(0,1000,2000,50)
 deadbwall = movable(0,0,50,1000)
 deadceil = movable(0,0,3050,50)
@@ -455,6 +461,7 @@ statcks = []
 plprojectiles = []
 stenemies = []
 invisis = []
+soultotems = []
 bosses = [lostsoul, clotho, lachesis, atropos, beelzlbub]
 player_front_image = pygame.image.load("player_front.gif")
 player_right_image = pygame.image.load("player_right.gif")
@@ -503,7 +510,7 @@ while run:
         resetlevel(objects)
 
     dmable = spenemies + senemies + projectileenemies + enemies + stenemies + bosses
-    mable = objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies+stenemies+invisis
+    mable = objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies+stenemies+invisis+soultotems
 
     key = pygame.key.get_pressed()
     screen.fill((255,255,255))
@@ -533,6 +540,8 @@ while run:
         pygame.draw.rect(screen,(200,0,0),anproj)
     for astenemy in stenemies:
         pygame.draw.rect(screen,(250,0,250),astenemy)
+    for asoultot in soultotems:
+        pygame.draw.rect(screen,(0,0,250),asoultot)
 
     #pygame.draw.circle(screen,(255,0,0),player.center,40)
     
@@ -614,6 +623,7 @@ while run:
 
     elif level == 0:
         objects = [ibackwall,iceiling,ifrontwall,ibackwall2,idjtest,idjwalkceiling,ifloort,ifloort2,idjwalk,idashtest]
+        soultotems = [istot]
         enemies = []
         senemies = []
         noncols = []
@@ -669,12 +679,22 @@ while run:
                         if triggert5 > 0:
                             triggert5 = 0
                         if ft6 < 255:   
-                            text = tutorialfont.render('e to hit',True,(ft6,ft6,ft6),(255,255,255))
+                            text = tutorialfont.render('e to attack',True,(ft6,ft6,ft6),(255,255,255))
                             screen.blit(text,(900,200))
                             if ftc < 1:
                                 ft6 += 1
                                 ftc = 4
-                        if ibackwall.centerx < -6500 and key[pygame.K_e] == True:
+                        if ibackwall.centerx < -7200:
+                            if triggert5 > 0:
+                                triggert5 = 0
+                            if ft8 < 255:   
+                                text = tutorialfont.render('this is a soul totem, press w while overlapping with it to refil your soul, edit your equipables, and move to the next level',True,(ft8,ft8,ft8),(255,255,255))
+                                screen.blit(text,(100,200))
+                                if ftc < 1:
+                                    ft8 += 1
+                                    ftc = 15
+                        
+                        if stunint:
                             objects.clear()
                             level = 1
     elif level == 2:
@@ -820,13 +840,14 @@ while run:
                         noncols.remove(abplat)
             if ascrollc < 1:
                 beelzlbub.health-=1
-                ascrollc = 150
+                ascrollc = 50
             else:
                 ascrollc-=1
             if player.colliderect(bosspoisonfloort):
                 if poisonc < 1:
-                    soul-=10
+                    soul-=40
                     ymom = -13
+                    poisonc = 50
                 else:
                     poisonc-=1
         else:
@@ -1582,6 +1603,43 @@ while run:
     for arem in rems:
         spenemies.remove(arem)
     rems = []
+
+    for atot in soultotems:
+        if player.colliderect(atot):
+            if interacting == False:
+                text = tutorialfont.render('w to use totem',True,(0,0,0),(255,255,255))
+                screen.blit(text,(900,200))
+            elif key[pygame.K_w]:
+                if interacting == True and selecting == 1 and atot.cooldown < 1:
+                    interacting = False
+                    atot.cooldown = 250
+                elif atot.cooldown < 1 and selecting == 1:
+                    interacting = True
+                    selecting = 1
+                    atot.cooldown = 250
+                elif interacting == True and atot.cooldown < 1:
+                    if selecting == 2 and sch1coled == True:
+                        sch1eqa+=1
+                        if sch1eqa == 4:
+                            sch1eqa = 0
+                else:
+                    atot.cooldown-=1
+            
+            if key[pygame.K_DOWN] == True and dp < 1:
+                if selecting == 1:
+                    selecting = 2
+                else:
+                    selecting = 1
+                dp = 160
+            elif key[pygame.K_UP] == True and dp < 1:
+                if selecting == 1:
+                    selecting = 2
+                else:
+                    selecting = 1
+                dp = 160
+            else:
+                dp-=1
+            
     
     for anEnemy in stenemies:
             if anEnemy.health > 0:
