@@ -7,6 +7,7 @@ import random
 Screen_Hight = 1000
 Screen_width = 1800
 screen = pygame.display.set_mode((Screen_width,Screen_Hight))
+soultotem_menu = pygame.surface.Surface((1400,800))
 
 class movable(pygame.Rect):
     "these are objects that can be moved and destroyed"
@@ -60,6 +61,7 @@ boss = 0
 ymom = 0
 dcool = 0
 xmom = 0
+sladd = 0
 difficuty = 0
 b2b = False
 oneteract = 0
@@ -82,13 +84,15 @@ triggert5 = 1
 lostsoul_beaten = False
 dashblock = False
 slashc = 0
-sldammage = 2
+bsldammage = 2
+bsoul_gain = 1
 dash = 12
 b2b = 0
 platpc = 0
 ftc = 0
 level = -4
 lives = 10
+sgadd = 0
 levsave = 0
 ascrollc = 0
 partam = 0
@@ -102,6 +106,12 @@ eqmo = False
 ft0 = 1
 ft1 = 1
 dp = 0
+eq1a = 0
+eq2a = 0
+eq3a = 0
+eq4a = 0
+eq5a = 0
+eq6a = 0
 b2b1 = False
 b2b2 = False
 b2b3 = False
@@ -117,10 +127,12 @@ ft6 = 1
 ft7 = 1
 ft8 = 1
 bdc = 0
+pdmadd = 0
+souladd = 0
 lost_attack = 0
 intc=0
 poisonc = 300
-max_soul = 100
+bmax_soul = 100
 soul_gain = 1
 cash = 0
 apsh = 0
@@ -439,6 +451,7 @@ ml3penemy2 = movable(2900,800,50,100)
 ml3senemy1 = movable(2800,800,50,100)
 lostsoul = movable(4200,880,60,100)
 blockwall = movable(5000,-1500,50,800)
+eqm = movable(200,100,1400,800)
 
 objects = []
 enemies = []
@@ -474,7 +487,7 @@ if difficulty == 1:
     atropos.health = 1700
     lachesis.health = 1700
     lostsoul.health = 3000
-    benemdm = 1
+    bbenemdm = 1
 else:
     beelzlbub.health = 1500
     bbh = 1500
@@ -482,7 +495,7 @@ else:
     atropos.health = 2000
     lachesis.health = 2000
     lostsoul.health = 4000
-    bendm = 1.3
+    bbenemdm = 1.3
 
 
 while run:
@@ -511,6 +524,14 @@ while run:
 
     dmable = spenemies + senemies + projectileenemies + enemies + stenemies + bosses
     mable = objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies+stenemies+invisis+soultotems
+    if eq5a == 1 and not projectiles in dmable:
+        dmable+=projectiles
+    elif projectiles in dmable:
+        dmable.remove(projectiles)
+    sldammage = bsldammage + sladd
+    max_soul = bmax_soul + souladd
+    soul_gain = bsoul_gain + sgadd
+    benemdm = bbenemdm + pdmadd
 
     key = pygame.key.get_pressed()
     screen.fill((255,255,255))
@@ -1274,7 +1295,7 @@ while run:
             else:
                 plprojectiles[len(plprojectiles)-1].ensxm = -3
             soul-=projcost
-            projcool = mprojcool
+            projcool = mprojcool - (eq4a/3)*mprojcool
 
         if key[pygame.K_SPACE] == True and (colt(player) == True or col(player) == True or jable>0) and jcool < 1 and not key[pygame.K_s] == True:
             ymom = JH
@@ -1376,6 +1397,7 @@ while run:
                     anEnemy.move_ip(anEnemy.ensxm * -2,0)
         else:
             enemies.remove(anEnemy)
+            soul+=eq3a * 15
             cash+=3
             
     for apEnemy in projectileenemies:
@@ -1410,6 +1432,7 @@ while run:
                     apEnemy.move_ip(apEnemy.ensxm * -2,0)
         else:
             projectileenemies.remove(apEnemy)
+            soul+=eq3a * 15
             cash+=3
     for apEnemy in senemies:
         if apEnemy.health > 0:
@@ -1440,6 +1463,7 @@ while run:
                     apEnemy.move_ip(apEnemy.ensxm * -2,0)
         else:
             senemies.remove(apEnemy)
+            soul+=eq3a * 15
             cash+=5
 
 
@@ -1469,8 +1493,8 @@ while run:
                 text = tutorialfont.render('w to pick up for 3 cash',True,(0,0,0),(255,255,255))
                 screen.blit(text,(900,200))
                 if key[pygame.K_w] == True and cash > 2:
-                    max_soul+=15
-                    soul_gain+=0.2
+                    bmax_soul+=15
+                    bsoul_gain+=0.2
                     cash-=3
                     noncols.remove(asoul)
     for adsh in dashups:
@@ -1489,7 +1513,7 @@ while run:
                 text = tutorialfont.render('w to pick up for 6 cash',True,(0,0,0),(255,255,255))
                 screen.blit(text,(900,200))
                 if key[pygame.K_w] == True and cash > 5:
-                    sldammage+=1
+                    bsldammage+=1
                     knockback+=1
                     cash-=6
                     noncols.remove(aslsh)
@@ -1600,6 +1624,7 @@ while run:
                     anEnemy.move_ip(anEnemy.ensxm * -2,0)
         else:
             rems.append(anEnemy)
+            soul+=eq3a * 15
     for arem in rems:
         spenemies.remove(arem)
     rems = []
@@ -1609,33 +1634,191 @@ while run:
             if interacting == False:
                 text = tutorialfont.render('w to use totem',True,(0,0,0),(255,255,255))
                 screen.blit(text,(900,200))
-            elif key[pygame.K_w]:
-                if interacting == True and selecting == 1 and atot.cooldown < 1:
+            if key[pygame.K_w]:
+                if interacting == True and atot.cooldown < 1:
                     interacting = False
                     atot.cooldown = 250
-                elif atot.cooldown < 1 and selecting == 1:
+                elif atot.cooldown < 1 and interacting == False:
                     interacting = True
                     selecting = 1
                     atot.cooldown = 250
-                elif interacting == True and atot.cooldown < 1:
-                    if selecting == 2 and sch1coled == True:
-                        sch1eqa+=1
-                        if sch1eqa == 4:
-                            sch1eqa = 0
-                else:
-                    atot.cooldown-=1
-            
-            if key[pygame.K_DOWN] == True and dp < 1:
+            atot.cooldown-=1
+            if interacting == True:
+                soultotem_menu.fill((250,250,250))
+                text = bossfont.render('equipables',True,(0,0,0),(200,200,200))
+                soultotem_menu.blit(text,(50,0))
                 if selecting == 1:
-                    selecting = 2
-                else:
+                    text = bossfont.render('<1>',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(100,300))
+                    text = bossfont.render('2',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(300,300))
+                    text = bossfont.render('3',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(500,300))
+                    text = bossfont.render('4',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(700,300))
+                    text = bossfont.render('5',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(900,300))
+                    text = bossfont.render('6',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,300))
+                    text = tutorialfont.render('take more dammage deal more dammage',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(50,500))
+                    text = bossfont.render(str(eq1a),True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,50))
+                    if key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                        eq1a+=1
+                        if eq1a>3:
+                            eq1a = 0
+                        dp = 160
+                    elif key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                        eq1a-=1
+                        if eq1a<0:
+                            eq1a = 3
+                        dp = 160
+                    else:
+                        dp-=1
+                elif selecting == 2:
+                    text = bossfont.render('1',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(100,300))
+                    text = bossfont.render('3',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(500,300))
+                    text = bossfont.render('4',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(700,300))
+                    text = bossfont.render('5',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(900,300))
+                    text = bossfont.render('6',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,300))
+                    text = bossfont.render('<2>',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(300,300))
+                    text = tutorialfont.render('more max soul, less soul regen',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(50,500))
+                    text = bossfont.render(str(eq2a),True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,50))
+                    if key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                        eq2a+=1
+                        if eq2a>3:
+                            eq2a = 0
+                        dp = 160
+                    elif key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                        eq2a-=1
+                        if eq2a<0:
+                            eq2a = 3
+                        dp = 160
+                    else:
+                        dp-=1
+                elif selecting == 3:
+                    text = bossfont.render('<3>',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(500,300))
+                    text = bossfont.render('2',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(300,300))
+                    text = bossfont.render('1',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(100,300))
+                    text = bossfont.render('4',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(700,300))
+                    text = bossfont.render('5',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(900,300))
+                    text = bossfont.render('6',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,300))
+                    text = tutorialfont.render('lose soulreap effectiveness but gain some  soul each kill',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(50,500))
+                    text = bossfont.render(str(eq3a),True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,50))
+                    if key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                        eq3a+=1
+                        if eq3a>3:
+                            eq3a = 0
+                        dp = 160
+                    else:
+                        dp-=1
+                elif selecting == 4:
+                    text = bossfont.render('<4>',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(700,300))
+                    text = bossfont.render('1',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(100,300))
+                    text = bossfont.render('2',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(300,300))
+                    text = bossfont.render('3',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(500,300))
+                    text = bossfont.render('5',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(900,300))
+                    text = bossfont.render('6',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,300))
+                    text = tutorialfont.render('fire projectiles faster but deal less slash dammage',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(50,500))
+                    text = bossfont.render(str(eq4a),True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,50))
+                    if key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                        eq4a+=1
+                        if eq4a>3:
+                            eq4a = 0
+                        dp = 160
+                    else:
+                        dp-=1
+                elif selecting == 5:
+                    text = bossfont.render('<5>',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(900,300))
+                    text = bossfont.render('1',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(100,300))
+                    text = bossfont.render('2',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(300,300))
+                    text = bossfont.render('3',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(500,300))
+                    text = bossfont.render('4',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(700,300))
+                    text = bossfont.render('6',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,300))
+                    text = tutorialfont.render('slash projectiles to deflect them',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(50,500))
+                    text = bossfont.render(str(eq5a),True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,50))
+                    if key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                        eq5a+=1
+                        if eq5a>1:
+                            eq5a = 0
+                        dp = 160
+                    else:
+                        dp-=1
+                elif selecting == 6:
+                    text = bossfont.render('<6>',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,300))
+                    text = bossfont.render('1',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(100,300))
+                    text = bossfont.render('2',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(300,300))
+                    text = bossfont.render('3',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(500,300))
+                    text = bossfont.render('4',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(700,300))
+                    text = bossfont.render('5',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(900,300))
+                    text = tutorialfont.render('small dammage increase',True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(50,500))
+                    text = bossfont.render(str(eq6a),True,(0,0,0),(200,200,200))
+                    soultotem_menu.blit(text,(1100,50))
+                    if key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                        eq6a+=1
+                        if eq6a>1:
+                            eq6a = 0
+                        dp = 160
+                    else:
+                        dp-=1
+                sladd = (eq1a * 0.15 * bsldammage) + (eq6a * 0.05 * bsldammage) - (eq4a * 0.1 * bsldammage)
+                souladd = eq2a * bmax_soul
+                sgadd = -1/3 * eq2a * bsoul_gain
+                pdmadd = eq1a * 0.1 * bbenemdm
+                                        
+                screen.blit(soultotem_menu,(200,100))
+
+
+
+            if key[pygame.K_RIGHT] == True and dp < 1 and interacting == True:
+                selecting+=1
+                if selecting>6:
                     selecting = 1
                 dp = 160
-            elif key[pygame.K_UP] == True and dp < 1:
-                if selecting == 1:
-                    selecting = 2
-                else:
-                    selecting = 1
+            elif key[pygame.K_LEFT] == True and dp < 1 and interacting == True:
+                selecting-=1
+                if selecting<1:
+                    selecting = 6
                 dp = 160
             else:
                 dp-=1
@@ -1691,6 +1874,7 @@ while run:
                         anEnemy.move_ip(anEnemy.ensxm * -2,0)
             else:
                 rems.append(anEnemy)
+                soul+=eq3a * 15
                 cash+=3
     for arem in rems:
         stenemies.remove(arem)
@@ -1705,7 +1889,10 @@ while run:
                 adma.ensxm = -5
         if adma.colliderect(soulreap) and soulreap.hidden == False:
             adma.health-=souldammage
-            soul+=souldammage
+            if eq3a < 1:
+                soul+=souldammage
+            else:
+                soul+=souldammage-(souldammage/3)*eq3a
         for aplproj in plprojectiles:
             if adma.colliderect(aplproj):
                 adma.health-=projdam
