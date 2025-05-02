@@ -97,6 +97,10 @@ levsave = 0
 ascrollc = 0
 partam = 0
 interact2ing = False
+eq6f = False
+eq5f = False
+eq4f = False
+eq3f = False
 intcool = 0
 rncad = 0
 ft = 1
@@ -327,7 +331,7 @@ timebar = movable(30,100,100,20)
 secret = movable(3200,130,50,50)
 slashup = movable(2900,900,50,50)
 dashup = movable(-200,900,50,50)
-slash = movable(0,0,60,40)
+slash = movable(0,0,60,50)
 soulreap = movable(0,0,120,100)
 ifloort = movable(0,1000,3000,50)
 ibackwall = movable(0,400,50,600)
@@ -452,6 +456,16 @@ ml3senemy1 = movable(2800,800,50,100)
 lostsoul = movable(4200,880,60,100)
 blockwall = movable(5000,-1500,50,800)
 eqm = movable(200,100,1400,800)
+ml2_eqar = movable(2300,-100,300,50)
+ml2_eqarp = movable(3000,-350,200,50)
+ml2_eq3 = movable(2450,-200,50,50)
+chl_floort = movable(0,1000,1800,50)
+chl_bwall = movable(0,0,50,1000)
+chl_fwall = movable(1800,0,50,1000)
+chl_ceil = movable(0,0,1800,50)
+chl_ptarget1 = movable(0,400,100,150)
+chl_ptarget2 = movable(0,700,100,150)
+chl_ptarget3 = movable(1700,400,100,150)
 
 objects = []
 enemies = []
@@ -475,6 +489,7 @@ plprojectiles = []
 stenemies = []
 invisis = []
 soultotems = []
+prsponds = []
 bosses = [lostsoul, clotho, lachesis, atropos, beelzlbub]
 player_front_image = pygame.image.load("player_front.gif")
 player_right_image = pygame.image.load("player_right.gif")
@@ -563,6 +578,8 @@ while run:
         pygame.draw.rect(screen,(250,0,250),astenemy)
     for asoultot in soultotems:
         pygame.draw.rect(screen,(0,0,250),asoultot)
+    for aprsponds in prsponds:
+        pygame.draw.rect(screen,(255,0,0),aprsponds)
 
     #pygame.draw.circle(screen,(255,0,0),player.center,40)
     
@@ -578,7 +595,7 @@ while run:
             slash.x=player.right
         else:
             slash.x=player.left-60
-        slash.y = yposition
+        slash.y = yposition - 10
         pygame.draw.rect(screen,(0,0,0),slash)
     else:
         slash.hidden = True
@@ -718,6 +735,7 @@ while run:
                         if stunint:
                             objects.clear()
                             level = 1
+                            stunint = False
     elif level == 2:
         objects = [deadfwall1,deadbwall,deadceil,deadfwall2,deadfloort,deadfloort2]
         enemies = []
@@ -768,8 +786,8 @@ while run:
             projectiles = []
             projectileenemies = []
         boss = 1
-        pygame.draw.rect(screen,(200,0,0),bhealthbar,beelzlbub.health)
-        bhealthbar.width = beelzlbub.health
+        pygame.draw.rect(screen,(200,0,0),bhealthbar,round(beelzlbub.health))
+        bhealthbar.width = round(beelzlbub.health)
         text = bossfont.render("beelzlbub, lord of flies",True,(255,100,100),(255,255,255))
         screen.blit(text,(400,0))
         if beelzlbub.health > bbh/2:
@@ -876,12 +894,12 @@ while run:
             level = 4
     elif level == 4:
         if not ml2bwall1 in objects:
-            objects = [ml2bwall1,ml2bwall2,ml2bwall3,ml2bwall4,ml2ceiling1,ml2ceil2,ml2ceil3,ml2fwall1,ml2fwall2,ml2floort1,ml2floort2,ml2floort3,ml2floort4,ml2secretfloort1,ml2secretfloort2,ml2secretfloort3,ml2secretfloort4,ml2secretfloort5,ml2secretfloort6,ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
+            objects = [ml2bwall1,ml2bwall2,ml2bwall3,ml2bwall4,ml2ceiling1,ml2ceil2,ml2ceil3,ml2fwall1,ml2fwall2,ml2floort1,ml2floort2,ml2floort3,ml2floort4,ml2secretfloort1,ml2secretfloort2,ml2secretfloort3,ml2secretfloort4,ml2secretfloort5,ml2secretfloort6,ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5,ml2_eqar,ml2_eqarp]
             enemies = [ml2enemy1,ml2enemy2,ml2enemy3,ml2enemy4,ml2enemy5,ml2enemy6,ml2enemy7,ml2enemy8,ml2enemy9,ml2enemy10,ml2enemy11]
             projectileenemies = [ml2penemy1,ml2penemy2,ml2penemy3,ml2penemy4,ml2penemy5]
             senemies = [ml2senemy]
-            noncols = [ml2secretar1,ml2secret1,ml2secretar2,ml2secret2,ml2secretar3,ml2secret3,ml2secretar4,ml2secret4,ml2secretar5,ml2secret5,ml2secretar6,ml2secret6]
-            aps = [ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5]
+            noncols = [ml2secretar1,ml2secret1,ml2secretar2,ml2secret2,ml2secretar3,ml2secret3,ml2secretar4,ml2secret4,ml2secretar5,ml2secret5,ml2secretar6,ml2secret6,ml2_eq3]
+            aps = [ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5,ml2_eqarp,ml2_eqar]
             soulups = [ml2secret1,ml2secret6]
             slashups = [ml2secret2]
             dashups = [ml2secret3]
@@ -1215,7 +1233,57 @@ while run:
                     lostsoul.cooldown = 500
                 elif lost_attack == 4 or lost_attack == 5:
                     lost_attack = 0
-
+            else:
+                eq6f = True
+                if blockwall in objects:
+                    objects.remove(blockwall)
+                text = tutorialfont.render('equipable aquired',True,(0,0,0),(255,255,255))
+                screen.blit(text,(900,200))
+        elif player.x < 200 and player.y > 200:
+            text = tutorialfont.render('w to travel the rift to a challenge level',True,(0,0,0),(255,255,255))
+            screen.blit(text,(900,200))
+            if key[pygame.K_w] == True:
+                level = 7
+    elif level == 7:
+        objects = [chl_floort,chl_bwall,chl_fwall,chl_ceil]
+        enemies = []
+        projectileenemies = []
+        senemies = []
+        stenemies = []
+        noncols = [chl_ptarget1,chl_ptarget2,chl_ptarget3]
+        aps = []
+        soulups = []
+        slashups = []
+        dashups = []
+        reapups = []
+        jumpups = []
+        invisis = []
+        prsponds = [chl_ptarget1,chl_ptarget2,chl_ptarget3]
+        text = tutorialfont.render('shoot the red targets',True,(0,0,0),(255,255,255))
+        screen.blit(text,(900,200))
+        pygame.draw.rect(screen,(200,0,0),timebar,time)
+        if timec < 1 and rncad == 0:
+            time-=1
+            timec = 30
+        elif rncad == 0:
+            timec-=1
+        if time < 1:
+            level = 6
+        timebar.width = time
+        for prs in prsponds:
+            for aplproj in plprojectiles:
+                if prs.colliderect(aplproj):
+                    rems.append(prs)
+                    prhits+=1
+        for arem in rems:
+            prsponds.remove(arem)
+        rems = []
+        if prhits>2:
+            eq4f = True
+            eq55 = True
+            level = 6
+        
+        
 
 
 
@@ -1535,6 +1603,13 @@ while run:
                     mjs += 1
                     cash-=9
                     noncols.remove(ajump)
+    if player.colliderect(ml2_eq3):
+        if ml2_eq3 in noncols:
+            text = tutorialfont.render('w to pick up equipable',True,(0,0,0),(255,255,255))
+            screen.blit(text,(900,200))
+            if key[pygame.K_w] == True and cash > 2:
+                noncols.remove(ml2_eq3)
+                eq3f = True
     
     for aproj in projectiles:
         aproj.move_ip(aproj.ensxm,0)
@@ -1637,6 +1712,7 @@ while run:
             if key[pygame.K_w]:
                 if interacting == True and atot.cooldown < 1:
                     interacting = False
+                    stunint = True
                     atot.cooldown = 250
                 elif atot.cooldown < 1 and interacting == False:
                     interacting = True
@@ -1652,14 +1728,18 @@ while run:
                     soultotem_menu.blit(text,(100,300))
                     text = bossfont.render('2',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(300,300))
-                    text = bossfont.render('3',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(500,300))
-                    text = bossfont.render('4',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(700,300))
-                    text = bossfont.render('5',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(900,300))
-                    text = bossfont.render('6',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(1100,300))
+                    if eq3f:
+                        text = bossfont.render('3',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(500,300))
+                    if eq4f == True:
+                        text = bossfont.render('4',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(700,300))
+                    if eq5f == True:
+                        text = bossfont.render('5',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(900,300))
+                    if eq6f == True:
+                        text = bossfont.render('6',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(1100,300))
                     text = tutorialfont.render('take more dammage deal more dammage',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(50,500))
                     text = bossfont.render(str(eq1a),True,(0,0,0),(200,200,200))
@@ -1679,14 +1759,18 @@ while run:
                 elif selecting == 2:
                     text = bossfont.render('1',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(100,300))
-                    text = bossfont.render('3',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(500,300))
-                    text = bossfont.render('4',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(700,300))
-                    text = bossfont.render('5',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(900,300))
-                    text = bossfont.render('6',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(1100,300))
+                    if eq3f:
+                        text = bossfont.render('3',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(500,300))
+                    if eq4f == True:
+                        text = bossfont.render('4',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(700,300))
+                    if eq5f == True:
+                        text = bossfont.render('5',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(900,300))
+                    if eq6f == True:
+                        text = bossfont.render('6',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(1100,300))
                     text = bossfont.render('<2>',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(300,300))
                     text = tutorialfont.render('more max soul, less soul regen',True,(0,0,0),(200,200,200))
@@ -1706,23 +1790,27 @@ while run:
                     else:
                         dp-=1
                 elif selecting == 3:
-                    text = bossfont.render('<3>',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(500,300))
+                    if eq3f:
+                        text = bossfont.render('<3>',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(500,300))
                     text = bossfont.render('2',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(300,300))
                     text = bossfont.render('1',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(100,300))
-                    text = bossfont.render('4',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(700,300))
-                    text = bossfont.render('5',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(900,300))
-                    text = bossfont.render('6',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(1100,300))
+                    if eq4f == True:
+                        text = bossfont.render('4',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(700,300))
+                    if eq5f == True:
+                        text = bossfont.render('5',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(900,300))
+                    if eq6f == True:
+                        text = bossfont.render('6',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(1100,300))
                     text = tutorialfont.render('lose soulreap effectiveness but gain some  soul each kill',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(50,500))
                     text = bossfont.render(str(eq3a),True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(1100,50))
-                    if key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                    if key[pygame.K_UP] == True and dp < 1 and interacting == True and eq3f:
                         eq3a+=1
                         if eq3a>3:
                             eq3a = 0
@@ -1730,23 +1818,27 @@ while run:
                     else:
                         dp-=1
                 elif selecting == 4:
-                    text = bossfont.render('<4>',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(700,300))
+                    if eq4f == True:
+                        text = bossfont.render('<4>',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(700,300))
                     text = bossfont.render('1',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(100,300))
                     text = bossfont.render('2',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(300,300))
-                    text = bossfont.render('3',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(500,300))
-                    text = bossfont.render('5',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(900,300))
-                    text = bossfont.render('6',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(1100,300))
+                    if eq3f:
+                        text = bossfont.render('3',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(500,300))
+                    if eq5f == True:
+                        text = bossfont.render('5',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(900,300))
+                    if eq6f == True:
+                        text = bossfont.render('6',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(1100,300))
                     text = tutorialfont.render('fire projectiles faster but deal less slash dammage',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(50,500))
                     text = bossfont.render(str(eq4a),True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(1100,50))
-                    if key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                    if key[pygame.K_UP] == True and dp < 1 and interacting == True and eq4f:
                         eq4a+=1
                         if eq4a>3:
                             eq4a = 0
@@ -1754,23 +1846,27 @@ while run:
                     else:
                         dp-=1
                 elif selecting == 5:
-                    text = bossfont.render('<5>',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(900,300))
+                    if eq5f == True:
+                        text = bossfont.render('<5>',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(900,300))
                     text = bossfont.render('1',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(100,300))
                     text = bossfont.render('2',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(300,300))
-                    text = bossfont.render('3',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(500,300))
-                    text = bossfont.render('4',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(700,300))
-                    text = bossfont.render('6',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(1100,300))
+                    if eq3f:
+                        text = bossfont.render('3',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(500,300))
+                    if eq4f == True:
+                        text = bossfont.render('4',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(700,300))
+                    if eq6f == True:
+                        text = bossfont.render('6',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(1100,300))
                     text = tutorialfont.render('slash projectiles to deflect them',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(50,500))
                     text = bossfont.render(str(eq5a),True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(1100,50))
-                    if key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                    if key[pygame.K_UP] == True and dp < 1 and interacting == True and eq5f == True:
                         eq5a+=1
                         if eq5a>1:
                             eq5a = 0
@@ -1778,27 +1874,32 @@ while run:
                     else:
                         dp-=1
                 elif selecting == 6:
-                    text = bossfont.render('<6>',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(1100,300))
+                    if eq6f == True:
+                        text = bossfont.render('<6>',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(1100,300))
                     text = bossfont.render('1',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(100,300))
                     text = bossfont.render('2',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(300,300))
-                    text = bossfont.render('3',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(500,300))
-                    text = bossfont.render('4',True,(0,0,0),(200,200,200))
-                    soultotem_menu.blit(text,(700,300))
+                    if eq3f:
+                        text = bossfont.render('3',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(500,300))
+                    if eq4f == True:
+                        text = bossfont.render('4',True,(0,0,0),(200,200,200))
+                        soultotem_menu.blit(text,(700,300))
                     text = bossfont.render('5',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(900,300))
                     text = tutorialfont.render('small dammage increase',True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(50,500))
                     text = bossfont.render(str(eq6a),True,(0,0,0),(200,200,200))
                     soultotem_menu.blit(text,(1100,50))
-                    if key[pygame.K_UP] == True and dp < 1 and interacting == True:
+                    if key[pygame.K_UP] == True and dp < 1 and interacting == True and eq6f:
                         eq6a+=1
                         if eq6a>1:
                             eq6a = 0
                         dp = 160
+                    elif not eq6f:
+                        eq6a = 0
                     else:
                         dp-=1
                 sladd = (eq1a * 0.15 * bsldammage) + (eq6a * 0.05 * bsldammage) - (eq4a * 0.1 * bsldammage)
