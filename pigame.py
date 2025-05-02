@@ -466,6 +466,8 @@ chl_ceil = movable(0,0,1800,50)
 chl_ptarget1 = movable(0,400,100,150)
 chl_ptarget2 = movable(0,700,100,150)
 chl_ptarget3 = movable(1700,400,100,150)
+ml2_soultotem = movable(10800,900,50,100)
+soultotem = movable(5800,-400,50,100)
 
 objects = []
 enemies = []
@@ -651,11 +653,11 @@ while run:
             senemies = [spenemy1]
             stenemies = []
             invisis = []
+            soultotems = [soultotem]
         if backboard.centerx < -4500:
-            text = tutorialfont.render('w to travel to the next level',True,(0,0,0),(255,255,255))
-            screen.blit(text,(900,200))
-            if key[pygame.K_w] == True:
+            if stunint == True:
                 level = 3
+                stunint == False
         
     
 
@@ -905,6 +907,7 @@ while run:
             dashups = [ml2secret3]
             reapups = [ml2secret4]
             jumpups = [ml2secret5]
+            soultotems = [ml2_soultotem]
         if md == 1:
             for amoplat in aps:
                 amoplat.move_ip(0,-0.5)
@@ -920,10 +923,9 @@ while run:
                 md = 1
             platmooveam = platmooveam-500
         if ml2bwall1.centerx < -9600:
-            text = tutorialfont.render('w to travel to the next level',True,(0,0,0),(255,255,255))
-            screen.blit(text,(900,200))
-            if key[pygame.K_w] == True:
+            if stunint == True:
                 level = 5
+                stunint == False
     elif level == 5:
         objects = [l2bfloort,l2bbwall,l2bfwall,l2bceil]
         noncols = [atropos,lachesis,clotho]
@@ -1218,7 +1220,7 @@ while run:
 
                 if projss > 0 and lostsoul.cooldown<1:
                     if player.x < lostsoul.x:
-                        lostproj = movable(lostsoul.x - 40,lostsoul.y+40,20,10)
+                        lostproj = movable(lostsoul.x - 40,lostsoul.y+(projss-1)*10,20,10)
                         projectiles.append(lostproj)
                     else:
                         lostproj = movable(lostsoul.x + 70,lostsoul.y + 40,20,10)
@@ -1235,14 +1237,17 @@ while run:
                     lost_attack = 0
             else:
                 eq6f = True
+                lostsoul_beaten = True
+                lost_fight = False
                 if blockwall in objects:
                     objects.remove(blockwall)
                 text = tutorialfont.render('equipable aquired',True,(0,0,0),(255,255,255))
                 screen.blit(text,(900,200))
-        elif player.x < 200 and player.y > 200:
+        elif ml3bwall1.x > 300 and ml3bwall1.y < 1000:
             text = tutorialfont.render('w to travel the rift to a challenge level',True,(0,0,0),(255,255,255))
             screen.blit(text,(900,200))
             if key[pygame.K_w] == True:
+                prhits = 0
                 level = 7
     elif level == 7:
         objects = [chl_floort,chl_bwall,chl_fwall,chl_ceil]
@@ -1713,6 +1718,7 @@ while run:
                 if interacting == True and atot.cooldown < 1:
                     interacting = False
                     stunint = True
+                    soul = max_soul
                     atot.cooldown = 250
                 elif atot.cooldown < 1 and interacting == False:
                     interacting = True
