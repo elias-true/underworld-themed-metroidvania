@@ -217,7 +217,7 @@ while level < -1 and run == True:
             text = bossfont.render('hard',True,(0,0,0),(255,255,255))
             screen.blit(text,(1500,600))
             if key[pygame.K_KP_ENTER] == True and dp < 1:
-                level = -1
+                level = 6
                 difficulty = 1
                 dp = 200
         else:
@@ -332,7 +332,7 @@ secret = movable(3200,130,50,50)
 slashup = movable(2900,900,50,50)
 dashup = movable(-200,900,50,50)
 slash = movable(0,0,60,50)
-soulreap = movable(0,0,120,100)
+soulreap = movable(0,0,120,70)
 ifloort = movable(0,1000,3000,50)
 ibackwall = movable(0,400,50,600)
 iceiling = movable(0,400,2000,50)
@@ -449,10 +449,18 @@ ml3plat10 = movable(-300,-1800,200,50)
 ml3enemy1 = movable(2000,800,50,100)
 ml3enemy2 = movable(2250,800,50,100)
 ml3enemy3 = movable(2500,800,50,100)
+ml3enemy4 = movable(3100,-800,50,100)
+ml3enemy5 = movable(3400,-800,50,100)
+ml3enemy6 = movable(3700,-800,50,100)
+ml3enemy7 = movable(3850,-800,50,100)
 ml3stenemy1 = movable(1900,800,50,100)
+ml3stenemy2 = movable(3250,-800,50,100)
+ml3stenemy3 = movable(3550,-800,50,100)
 ml3penemy1 = movable(2700,800,50,100)
 ml3penemy2 = movable(2900,800,50,100)
 ml3senemy1 = movable(2800,800,50,100)
+ml3senemy2 = movable(4000,-800,50,100)
+ml3senemy3 = movable(4150,-800,50,100)
 lostsoul = movable(4200,880,60,100)
 blockwall = movable(5000,-1500,50,800)
 eqm = movable(200,100,1400,800)
@@ -466,8 +474,18 @@ chl_ceil = movable(0,0,1800,50)
 chl_ptarget1 = movable(0,400,100,150)
 chl_ptarget2 = movable(0,700,100,150)
 chl_ptarget3 = movable(1700,400,100,150)
-ml2_soultotem = movable(10800,900,50,100)
+ml2_soultotem = movable(10800,950,50,100)
 soultotem = movable(5800,-400,50,100)
+bsoultotem = movable(1000,950,50,100)
+ml3soultotem = movable(2300,-2100,50,100)
+b3floort = movable(0,1000,10000,50)
+b3bwall = movable(0,0,50,1000)
+b3ceil = movable(0,0,50,10000)
+b3fwall1 = movable(1800,0,50,1000)
+b3fwall2 = movable(10000,0,50,1000)
+death = movable(100,850,40,150)
+b3soultotem = movable(200,950,50,100)
+b2soultotem = movable(200,950,50,100)
 
 objects = []
 enemies = []
@@ -492,7 +510,7 @@ stenemies = []
 invisis = []
 soultotems = []
 prsponds = []
-bosses = [lostsoul, clotho, lachesis, atropos, beelzlbub]
+bosses = [lostsoul, clotho, lachesis, atropos, beelzlbub, death]
 player_front_image = pygame.image.load("player_front.gif")
 player_right_image = pygame.image.load("player_right.gif")
 player_left_image = pygame.transform.flip(player_right_image,True,False)
@@ -504,6 +522,7 @@ if difficulty == 1:
     atropos.health = 1700
     lachesis.health = 1700
     lostsoul.health = 3000
+    death.health = 5000
     bbenemdm = 1
 else:
     beelzlbub.health = 1500
@@ -512,6 +531,7 @@ else:
     atropos.health = 2000
     lachesis.health = 2000
     lostsoul.health = 4000
+    death.health = 6000
     bbenemdm = 1.3
 
 
@@ -541,10 +561,10 @@ while run:
 
     dmable = spenemies + senemies + projectileenemies + enemies + stenemies + bosses
     mable = objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies+stenemies+invisis+soultotems
-    if eq5a == 1 and not projectiles in dmable:
-        dmable+=projectiles
-    elif projectiles in dmable:
-        dmable.remove(projectiles)
+#    if eq5a == 1 and not projectiles in dmable:
+#        dmable.append(projectiles)
+#    elif projectiles in dmable:
+#        dmable.remove(projectiles)
     sldammage = bsldammage + sladd
     max_soul = bmax_soul + souladd
     soul_gain = bsoul_gain + sgadd
@@ -558,12 +578,12 @@ while run:
         pygame.draw.rect(screen,(0,0,255),aproj)
     for anmenemy in enemies:
         pygame.draw.rect(screen,(200,0,0),anmenemy)
-    for anmnoncol in noncols:
-        pygame.draw.rect(screen,(50,0,0),anmnoncol)
     for anmpenemy in projectileenemies:
         pygame.draw.rect(screen,(0,200,0),anmpenemy)
     for anmaps in aps:
         pygame.draw.rect(screen,(0,0,0),anmaps)
+    for anmnoncol in noncols:
+        pygame.draw.rect(screen,(50,0,0),anmnoncol)
     for senemyn in senemies:
         pygame.draw.rect(screen,(150,150,0),senemyn)
     for spawneden in spenemies:
@@ -643,6 +663,7 @@ while run:
 
     if level == 1:
         if len(objects) == 0:
+            stunint = False
             objects = [roof,fwall,bwall,plat1,plat2,plat3,plat4,fiwall,backboard,floort,tplat1,tplat2,tplat3,tplat4,floort2,invis_sfloort,invis_sbwall]
             enemies = [enemy1,enemy2,enemy3]
             projectileenemies = [enemyprojectile,enemyprojectile2]
@@ -747,6 +768,7 @@ while run:
         aps = []
         stenemies = []
         invisis = []
+        soultotems = []
         text = tutorialfont.render('escape',True,(255,0,0),(255,255,255))
         screen.blit(text,(900,200))
         pygame.draw.rect(screen,(200,0,0),timebar,time)
@@ -781,12 +803,14 @@ while run:
                 objects.clear()
     
     elif level == 3:
-        if not bossfloort in objects:    
+        if not bossfloort in objects:
+            stunint = False
             objects = [bossbwall,bossfwall,bossceiling,bossfloort]
             enemies = []
             noncols = [bosspoisonfloort,beelzlbub]
             projectiles = []
             projectileenemies = []
+            invisis = [bsoultotem]
         boss = 1
         pygame.draw.rect(screen,(200,0,0),bhealthbar,round(beelzlbub.health))
         bhealthbar.width = round(beelzlbub.health)
@@ -893,9 +917,16 @@ while run:
                     poisonc-=1
         else:
             b1b = True
-            level = 4
+            soultotems = [bsoultotem]
+            invisis = []
+            text = tutorialfont.render('soulreap unlocked, press R',True,(ft8,ft8,ft8),(255,255,255))
+            screen.blit(text,(100,200))
+            if stunint:
+                level = 4
+                stunint = False
     elif level == 4:
         if not ml2bwall1 in objects:
+            stunint = False
             objects = [ml2bwall1,ml2bwall2,ml2bwall3,ml2bwall4,ml2ceiling1,ml2ceil2,ml2ceil3,ml2fwall1,ml2fwall2,ml2floort1,ml2floort2,ml2floort3,ml2floort4,ml2secretfloort1,ml2secretfloort2,ml2secretfloort3,ml2secretfloort4,ml2secretfloort5,ml2secretfloort6,ml2plat1,ml2plat2,ml2plat3,ml2plat4,ml2plat5,ml2_eqar,ml2_eqarp]
             enemies = [ml2enemy1,ml2enemy2,ml2enemy3,ml2enemy4,ml2enemy5,ml2enemy6,ml2enemy7,ml2enemy8,ml2enemy9,ml2enemy10,ml2enemy11]
             projectileenemies = [ml2penemy1,ml2penemy2,ml2penemy3,ml2penemy4,ml2penemy5]
@@ -927,8 +958,11 @@ while run:
                 level = 5
                 stunint == False
     elif level == 5:
-        objects = [l2bfloort,l2bbwall,l2bfwall,l2bceil]
-        noncols = [atropos,lachesis,clotho]
+        if not l2bfloort in objects:
+            objects = [l2bfloort,l2bbwall,l2bfwall,l2bceil]
+            noncols = [atropos,lachesis,clotho]
+            invisis = [b2soultotem]
+            stunint == False
         pygame.draw.rect(screen,(200,0,0),bhealthbar)
         bhealthbar.width = (clotho.health + lachesis.health + atropos.health)
         text = bossfont.render("the fates",True,(255,100,100),(255,255,255))
@@ -973,12 +1007,6 @@ while run:
                         clotho.move_ip(1,0)
             if clotho.colliderect(player):
                 soul-=0.3
-            if clotho.colliderect(slash) and clotho.invulnrabilityc < 1 and slash.hidden == False:
-                clotho.health-=sldammage
-                clotho.invulnrabilityc=sli
-            if clotho.colliderect(soulreap) and clotho.srinvulnrabilityc < 1 and soulreap.hidden == False:
-                clotho.health-=souldammage
-                soul+=souldammage*2
                 clotho.srinvulnrabilityc=5000
             clotho.invulnrabilityc-=1
             clotho.srinvulnrabilityc -= 1
@@ -1025,12 +1053,6 @@ while run:
                         lachesis.move_ip(1,0)
             if lachesis.colliderect(player):
                 soul-=0.3
-            if lachesis.colliderect(slash) and lachesis.invulnrabilityc < 1 and slash.hidden == False:
-                lachesis.health-=sldammage
-                lachesis.invulnrabilityc=sli
-            if lachesis.colliderect(soulreap) and lachesis.srinvulnrabilityc < 1 and soulreap.hidden == False:
-                lachesis.health-=souldammage
-                soul+=souldammage*2
                 lachesis.srinvulnrabilityc=5000
             lachesis.invulnrabilityc-=1
             lachesis.srinvulnrabilityc -= 1
@@ -1076,12 +1098,6 @@ while run:
                         atropos.move_ip(1,0)
             if atropos.colliderect(player):
                 soul-=0.3
-            if atropos.colliderect(slash) and atropos.invulnrabilityc < 1 and slash.hidden == False:
-                atropos.health-=sldammage
-                atropos.invulnrabilityc=sli
-            if atropos.colliderect(soulreap) and atropos.srinvulnrabilityc < 1 and soulreap.hidden == False:
-                atropos.health-=souldammage
-                soul+=souldammage*2
                 atropos.srinvulnrabilityc=5000
             atropos.invulnrabilityc-=1
             atropos.srinvulnrabilityc-=1
@@ -1090,14 +1106,24 @@ while run:
             b2b3 = True
         if b2b1 == True and b2b2 == True and b2b3 == True:
             b2b = True
-            level = 6
+            soultotems = [b2soultotem]
+            invisis = []
+            text = tutorialfont.render('projectile unlocked, press F',True,(ft8,ft8,ft8),(255,255,255))
+            screen.blit(text,(100,200))
+            if stunint:
+                bosses.remove(atropos)
+                bosses.remove(lachesis)
+                bosses.remove(clotho)
+                level = 6
+                stunint = False
     elif level == 6:
         if not ml3floort1 in objects:
+            stunint = False
             objects = [ml3floort1,ml3floort2,ml3floort3,ml3floort4,ml3floort5,ml3bwall1,ml3bwall2,ml3bwall3,ml3bwall4,ml3bwall5,ml3fwall1,ml3fwall2,ml3fwall3,ml3fwall4,ml3ceil1,ml3ceil2,ml3ceil3,ml3ceil4,ml3plat1,ml3plat2,ml3plat3,ml3plat4,ml3plat5,ml3plat6,ml3plat7,ml3plat8,ml3plat9,ml3plat10]
-            enemies = [ml3enemy1,ml3enemy2,ml3enemy3]
+            enemies = [ml3enemy1,ml3enemy2,ml3enemy3,ml3enemy4,ml3enemy5,ml3enemy6,ml3enemy7]
             projectileenemies = [ml3penemy1,ml3penemy2]
-            senemies = [ml3senemy1]
-            stenemies = [ml3stenemy1]
+            senemies = [ml3senemy1,ml3senemy2,ml3senemy3]
+            stenemies = [ml3stenemy1,ml3stenemy2,ml3stenemy3]
             noncols = [lostsoul]
             aps = [ml3plat1,ml3plat2,ml3plat3,ml3plat4,ml3plat5,ml3plat6,ml3plat7,ml3plat8,ml3plat9,ml3plat10]
             soulups = []
@@ -1105,7 +1131,9 @@ while run:
             dashups = []
             reapups = []
             jumpups = []
+            prsponds = []
             invisis = [blockwall]
+            soultotems = [ml3soultotem]
         if (player.x > ml3floort3.x and player.y > ml3floort3.y - 100 and player.x < ml3floort3.x + 1000 and lostsoul_beaten == False) or lost_fight == True:
             if not blockwall in objects:
                 objects.append(blockwall)
@@ -1249,28 +1277,34 @@ while run:
             if key[pygame.K_w] == True:
                 prhits = 0
                 level = 7
+        elif stunint:
+            objects.clear()
+            level = 8
+            stunint = False
     elif level == 7:
-        objects = [chl_floort,chl_bwall,chl_fwall,chl_ceil]
-        enemies = []
-        projectileenemies = []
-        senemies = []
-        stenemies = []
-        noncols = [chl_ptarget1,chl_ptarget2,chl_ptarget3]
-        aps = []
-        soulups = []
-        slashups = []
-        dashups = []
-        reapups = []
-        jumpups = []
-        invisis = []
-        prsponds = [chl_ptarget1,chl_ptarget2,chl_ptarget3]
+        if not chl_floort in objects:
+            time = 600
+            objects = [chl_floort,chl_bwall,chl_fwall,chl_ceil]
+            enemies = []
+            projectileenemies = []
+            senemies = []
+            stenemies = []
+            noncols = [chl_ptarget1,chl_ptarget2,chl_ptarget3]
+            aps = []
+            soulups = []
+            slashups = []
+            dashups = []
+            reapups = []
+            jumpups = []
+            invisis = []
+            prsponds = [chl_ptarget1,chl_ptarget2,chl_ptarget3]
         text = tutorialfont.render('shoot the red targets',True,(0,0,0),(255,255,255))
         screen.blit(text,(900,200))
         pygame.draw.rect(screen,(200,0,0),timebar,time)
-        if timec < 1 and rncad == 0:
+        if timec < 1:
             time-=1
             timec = 30
-        elif rncad == 0:
+        else:
             timec-=1
         if time < 1:
             level = 6
@@ -1278,15 +1312,185 @@ while run:
         for prs in prsponds:
             for aplproj in plprojectiles:
                 if prs.colliderect(aplproj):
-                    rems.append(prs)
+                    prsponds.remove(prs)
                     prhits+=1
-        for arem in rems:
-            prsponds.remove(arem)
-        rems = []
-        if prhits>2:
+        if len(prsponds)<1:
             eq4f = True
-            eq55 = True
+            eq5f = True
             level = 6
+    elif level == 8:
+        level = 9
+        if not b3floort in objects:
+            objects = [b3floort,b3bwall,b3ceil,b3fwall1,b3fwall2]
+            enemies = []
+            senemies = []
+            noncols = [death]
+            projectiles = []
+            projectileenemies = []
+            spenemies = []
+            aps = []
+            enatcks = []
+            battacks = []
+            rems = []
+            slashups = []
+            dashups = []
+            soulups = []
+            reapups = []
+            jumpups = []
+            fatcks = []
+            statcks = []
+            plprojectiles = []
+            stenemies = []
+            invisis = [b3soultotem]
+            soultotems = []
+            prsponds = []
+            atchoice = 0
+        if death.health > 3000:
+            pygame.draw.rect(screen,(200,0,100),death)
+            if death.centerx>player.left and atchoice == 0:
+                death.move_ip(-0.5,0)
+                for awall in objects:
+                    if death.colliderect(awall):
+                        death.move_ip(1,0)
+            elif death.centerx<player.left and atchoice == 0:
+                death.move_ip(0.5,0)
+                for awall in objects:
+                    if death.colliderect(awall):
+                        death.move_ip(-1,0)
+            if player.centerx > death.centerx -200 and player.centerx < death.centerx + 200 and death.cooldown < 1 and atchoice == 0:
+                death.ymom = -10
+                death.cooldoown = 2500
+                atchoice = 1
+            elif atchoice == 1:
+                death.move_ip(0,death.ymom)
+                if death.ymom>0:
+                    death.ymom-=0.05
+                else:
+                    death.ymom+=0.05
+                if death.colliderect(player):
+                    soul-=1
+                if death.ymom > -0.1 and death.ymom < 0.1:
+                    death.ymom = 0
+                if death.ymom == 0:
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = -2
+                        projectiles[len(projectiles) - 1].ymom = 0
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = -1.8
+                        projectiles[len(projectiles) - 1].ymom = 0.2
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = -1.6
+                        projectiles[len(projectiles) - 1].ymom = 0.4
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = -1.4
+                        projectiles[len(projectiles) - 1].ymom = 0.6
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = -1.2
+                        projectiles[len(projectiles) - 1].ymom = 0.8
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = -1
+                        projectiles[len(projectiles) - 1].ymom = 1
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = -0.8
+                        projectiles[len(projectiles) - 1].ymom = 1.2
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = -0.6
+                        projectiles[len(projectiles) - 1].ymom = 1.4
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = -0.4
+                        projectiles[len(projectiles) - 1].ymom = 1.6
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = -0.2
+                        projectiles[len(projectiles) - 1].ymom = 1.8
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = 0
+                        projectiles[len(projectiles) - 1].ymom = 2
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = 0.2
+                        projectiles[len(projectiles) - 1].ymom = 1.8
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = 0.4
+                        projectiles[len(projectiles) - 1].ymom = 1.6
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = 0.6
+                        projectiles[len(projectiles) - 1].ymom = 1.4
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = 0.8
+                        projectiles[len(projectiles) - 1].ymom = 1.2
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = 1
+                        projectiles[len(projectiles) - 1].ymom = 1
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = 1.2
+                        projectiles[len(projectiles) - 1].ymom = 0.8
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = 1.4
+                        projectiles[len(projectiles) - 1].ymom = 0.6
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = 1.6
+                        projectiles[len(projectiles) - 1].ymom = 0.4
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = 1.8
+                        projectiles[len(projectiles) - 1].ymom = 0.2
+                        deathproj = movable(death.centerx,death.centery+70,10,10)
+                        projectiles.append(deathproj)
+                        projectiles[len(projectiles) - 1].pdammage = 50
+                        projectiles[len(projectiles) - 1].ensxm = 2
+                        projectiles[len(projectiles) - 1].ymom = 0
+    elif level == 9:
+        screen.fill((0,0,0))
+        text = bossfont.render('a game by elias true schoenfelder watson',True,(255,255,255),(0,0,0))
+        screen.blit(text,(200,200))
+        text = bossfont.render('art by illiana',True,(255,255,255),(0,0,0))
+        screen.blit(text,(200,500))
+        text = tutorialfont.render('notable story assistance provided by colin bannen and will severtson',True,(255,255,255),(0,0,0))
+        screen.blit(text,(200,800))
+
+
+
+
+            
+
         
         
 
@@ -1470,7 +1674,9 @@ while run:
                     anEnemy.move_ip(anEnemy.ensxm * -2,0)
         else:
             enemies.remove(anEnemy)
-            soul+=eq3a * 15
+            if anEnemy in dmable:
+                dmable.remove(anEnemy)
+            eq3a * 15
             cash+=3
             
     for apEnemy in projectileenemies:
@@ -1505,6 +1711,8 @@ while run:
                     apEnemy.move_ip(apEnemy.ensxm * -2,0)
         else:
             projectileenemies.remove(apEnemy)
+            if apEnemy in dmable:
+                dmable.remove(apEnemy)
             soul+=eq3a * 15
             cash+=3
     for apEnemy in senemies:
@@ -1536,6 +1744,8 @@ while run:
                     apEnemy.move_ip(apEnemy.ensxm * -2,0)
         else:
             senemies.remove(apEnemy)
+            if apEnemy in dmable:
+                dmable.remove(apEnemy)
             soul+=eq3a * 15
             cash+=5
 
@@ -1640,6 +1850,8 @@ while run:
     for arem in rems:
         if arem in projectiles:
             projectiles.remove(arem)
+        if arem in dmable:
+            dmable.remove(arem)
     rems = []
     for anattack in enatcks:
         if anattack.slashlife > 0:
@@ -1673,7 +1885,7 @@ while run:
         interact2ing = False
     for anEnemy in spenemies:
         if anEnemy.health > 0:
-            if xposition > anEnemy.centerx - 600 and xposition < anEnemy.centerx + 600 and not anEnemy.colliderect(player):
+            if xposition > anEnemy.centerx - 800 and xposition < anEnemy.centerx + 800 and not anEnemy.colliderect(player):
                 if anEnemy.ensxm == 0:
                     if anEnemy.centerx<player.left:
                         anEnemy.move_ip(.5,0)
@@ -1707,6 +1919,8 @@ while run:
             soul+=eq3a * 15
     for arem in rems:
         spenemies.remove(arem)
+        if anEnemy in dmable:
+            dmable.remove(arem)
     rems = []
 
     for atot in soultotems:
@@ -1908,10 +2122,10 @@ while run:
                         eq6a = 0
                     else:
                         dp-=1
-                sladd = (eq1a * 0.15 * bsldammage) + (eq6a * 0.05 * bsldammage) - (eq4a * 0.1 * bsldammage)
-                souladd = eq2a * bmax_soul
-                sgadd = -1/3 * eq2a * bsoul_gain
-                pdmadd = eq1a * 0.1 * bbenemdm
+                sladd = (eq1a * 0.3 * bsldammage) + (eq6a * 0.05 * bsldammage) - (eq4a * 0.1 * bsldammage)
+                souladd = 2/3 * eq2a * bmax_soul
+                sgadd = -1/4 * eq2a * bsoul_gain
+                pdmadd = eq1a * 0.2 * bbenemdm
                                         
                 screen.blit(soultotem_menu,(200,100))
 
@@ -1985,6 +2199,8 @@ while run:
                 cash+=3
     for arem in rems:
         stenemies.remove(arem)
+        if anEnemy in dmable:
+            dmable.remove(arem)
     rems = []
 
     for adma in dmable:
@@ -1994,12 +2210,9 @@ while run:
                 adma.ensxm = 5
             else:
                 adma.ensxm = -5
-        if adma.colliderect(soulreap) and soulreap.hidden == False:
+        if adma.colliderect(soulreap) and soulreap.hidden == False and (adma in spenemies or adma in senemies or adma in projectileenemies or adma in enemies or adma in stenemies or adma in bosses):
             adma.health-=souldammage
-            if eq3a < 1:
-                soul+=souldammage
-            else:
-                soul+=souldammage-(souldammage/3)*eq3a
+            soul+=souldammage-(souldammage/3)*eq3a
         for aplproj in plprojectiles:
             if adma.colliderect(aplproj):
                 adma.health-=projdam
