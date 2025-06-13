@@ -3,6 +3,7 @@ import pygame
 pygame.init()
 import time as timekeep
 import random
+import math
 
 Screen_Hight = 1000
 Screen_width = 1800
@@ -217,7 +218,7 @@ while level < -1 and run == True:
             text = bossfont.render('hard',True,(0,0,0),(255,255,255))
             screen.blit(text,(1500,600))
             if key[pygame.K_KP_ENTER] == True and dp < 1:
-                level = 6
+                level = -1
                 difficulty = 1
                 dp = 200
         else:
@@ -281,6 +282,8 @@ class movable(pygame.Rect):
     pdammage = 30
     initback = None
     inittop = None
+    animate_step = 0
+    animate_iterator = 0
     
     def move_ip(self,deltaX:float,deltaY:float):
         self.tx = self.tx+deltaX
@@ -344,6 +347,7 @@ idjwalk = movable(4000,100,1000,50)
 idjwalkceiling = movable(4000,-100,4500,50)
 idashtest = movable(5300,100,3200,50)
 istot = movable(8300,-20,40,120)
+iflyingentest = movable(600,700,64,64)
 deadfloort = movable(0,1000,2000,50)
 deadbwall = movable(0,0,50,1000)
 deadceil = movable(0,0,3050,50)
@@ -477,7 +481,7 @@ chl_ptarget3 = movable(1700,400,100,150)
 ml2_soultotem = movable(10800,950,50,100)
 soultotem = movable(5800,-400,50,100)
 bsoultotem = movable(1000,950,50,100)
-ml3soultotem = movable(2300,-2100,50,100)
+ml3soultotem = movable(2300,-2000,50,100)
 b3floort = movable(0,1000,10000,50)
 b3bwall = movable(0,0,50,1000)
 b3ceil = movable(0,0,50,10000)
@@ -510,10 +514,17 @@ stenemies = []
 invisis = []
 soultotems = []
 prsponds = []
+flyingens = []
 bosses = [lostsoul, clotho, lachesis, atropos, beelzlbub, death]
 player_front_image = pygame.image.load("player_front.gif")
 player_right_image = pygame.image.load("player_right.gif")
 player_left_image = pygame.transform.flip(player_right_image,True,False)
+fen_1_1 = pygame.image.load("ghost_bat_thing1.png")
+fen_2_1 = pygame.image.load("ghost_bat_thing2.png")
+fen_3_1 = pygame.image.load("ghost_bat_thing3.png")
+fen_1 = pygame.transform.scale(fen_1_1,(64,64))
+fen_2 = pygame.transform.scale(fen_2_1,(64,64))
+fen_3 = pygame.transform.scale(fen_3_1,(64,64))
 
 if difficulty == 1:
     beelzlbub.health = 1000
@@ -559,8 +570,8 @@ while run:
         battacks = []
         resetlevel(objects)
 
-    dmable = spenemies + senemies + projectileenemies + enemies + stenemies + bosses
-    mable = objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies+stenemies+invisis+soultotems
+    dmable = spenemies + senemies + projectileenemies + enemies + stenemies + bosses + flyingens
+    mable = objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies+stenemies+invisis+soultotems+flyingens 
 #    if eq5a == 1 and not projectiles in dmable:
 #        dmable.append(projectiles)
 #    elif projectiles in dmable:
@@ -694,6 +705,7 @@ while run:
         aps = []
         enatcks = []
         battacks = []
+        flyingens = [iflyingentest]
         if ft1 < 255 and not ibackwall.centerx < -1000:    
             text = tutorialfont.render('A and D to move',True,(ft1,ft1,ft1),(255,255,255))
             screen.blit(text,(900,200))
@@ -1481,8 +1493,10 @@ while run:
         screen.fill((0,0,0))
         text = bossfont.render('a game by elias true schoenfelder watson',True,(255,255,255),(0,0,0))
         screen.blit(text,(200,200))
-        text = bossfont.render('art by illiana',True,(255,255,255),(0,0,0))
-        screen.blit(text,(200,500))
+        text = tutorialfont.render('enemy and wall art by reuben haugen',True,(255,255,255),(0,0,0))
+        screen.blit(text,(200,450))
+        text = tutorialfont.render('player art by illiana',True,(255,255,255),(0,0,0))
+        screen.blit(text,(200,700))
         text = tutorialfont.render('notable story assistance provided by colin bannen and will severtson',True,(255,255,255),(0,0,0))
         screen.blit(text,(200,800))
 
@@ -2202,6 +2216,30 @@ while run:
         if anEnemy in dmable:
             dmable.remove(arem)
     rems = []
+
+    for afen in flyingens:
+        if afen.health > 0:
+            if afen.animate_step == 0:
+                screen.blit(fen_1,(afen.x,afen.y))
+            elif afen.animate_step == 1:
+                screen.blit(fen_2,(afen.x,afen.y))
+            elif afen.animate_step == 2:
+                screen.blit(fen_3,(afen.x,afen.y))
+            else:
+                afen.animate_step = 0
+            if xposition > afen.centerx - 600 and xposition < afen.centerx + 600 and yposition > afen.centery - 600 and yposition < afen.centery + 600 and not afen.colliderect(player):
+                afen.move_ip(((xposition-afen.centerx)/math.sqrt((xposition-afen.centerx)**2+(yposition-afen.centery)**2)) * 0.6,((yposition-afen.centery)/math.sqrt((xposition-afen.centerx)**2+(yposition-afen.centery)**2)) * 0.6)
+                for anob in objects:
+                    if afen.colliderect(anob):
+                        afen.move_ip(((xposition-afen.centerx)/math.sqrt((xposition-afen.centerx)**2+(yposition-afen.centery)**2)) * -1,((yposition-afen.centery)/math.sqrt((xposition-afen.centerx)**2+(yposition-afen.centery)**2)) * -1)
+            afen.animate_iterator += 1
+            if afen.animate_iterator > 60:
+                afen.animate_iterator = 0
+                afen.animate_step += 1
+            if afen.colliderect(player):
+                soul-=0.3
+            
+                
 
     for adma in dmable:
         if adma.colliderect(slash) and slash.hidden == False:
