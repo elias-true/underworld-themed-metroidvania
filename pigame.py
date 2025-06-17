@@ -284,6 +284,7 @@ class movable(pygame.Rect):
     inittop = None
     animate_step = 0
     animate_iterator = 0
+    wallcollidecheck = 0
     
     def move_ip(self,deltaX:float,deltaY:float):
         self.tx = self.tx+deltaX
@@ -347,7 +348,6 @@ idjwalk = movable(4000,100,1000,50)
 idjwalkceiling = movable(4000,-100,4500,50)
 idashtest = movable(5300,100,3200,50)
 istot = movable(8300,-20,40,120)
-iflyingentest = movable(600,700,64,64)
 deadfloort = movable(0,1000,2000,50)
 deadbwall = movable(0,0,50,1000)
 deadceil = movable(0,0,3050,50)
@@ -414,6 +414,11 @@ ml2penemy3 = movable(8900,900,50,100)
 ml2penemy4 = movable(9200,900,50,100)
 ml2penemy5 = movable(9500,900,50,100)
 ml2senemy = movable(9600,900,50,100)
+ml2flenemy1 = movable(900,600,32,32)
+ml2flenemy2 = movable(2300,900,32,32)
+ml2flenemy3 = movable(5200,-1500,32,32)
+ml2flenemy4 = movable(8100,600,32,32)
+ml2flenemy5 = movable(8800,600,32,32)
 lostsoul1 = movable(2000,900,60,110)
 l2bfloort = movable(0,1000,2000,50)
 l2bbwall = movable(0,0,50,1000)
@@ -465,6 +470,8 @@ ml3penemy2 = movable(2900,800,50,100)
 ml3senemy1 = movable(2800,800,50,100)
 ml3senemy2 = movable(4000,-800,50,100)
 ml3senemy3 = movable(4150,-800,50,100)
+ml3flenemy1 = movable(2300,500,32,32)
+ml3flenemy2 = movable(3500,-1300,32,32)
 lostsoul = movable(4200,880,60,100)
 blockwall = movable(5000,-1500,50,800)
 eqm = movable(200,100,1400,800)
@@ -490,6 +497,7 @@ b3fwall2 = movable(10000,0,50,1000)
 death = movable(100,850,40,150)
 b3soultotem = movable(200,950,50,100)
 b2soultotem = movable(200,950,50,100)
+flyingenemy = movable(1600,500,32,32)
 
 objects = []
 enemies = []
@@ -568,6 +576,7 @@ while run:
         aps = []
         enatcks = []
         battacks = []
+        flyingens = []
         resetlevel(objects)
 
     dmable = spenemies + senemies + projectileenemies + enemies + stenemies + bosses + flyingens
@@ -686,6 +695,7 @@ while run:
             stenemies = []
             invisis = []
             soultotems = [soultotem]
+            flyingens = [flyingenemy]
         if backboard.centerx < -4500:
             if stunint == True:
                 level = 3
@@ -705,7 +715,7 @@ while run:
         aps = []
         enatcks = []
         battacks = []
-        flyingens = [iflyingentest]
+        flyingens = []
         if ft1 < 255 and not ibackwall.centerx < -1000:    
             text = tutorialfont.render('A and D to move',True,(ft1,ft1,ft1),(255,255,255))
             screen.blit(text,(900,200))
@@ -781,6 +791,7 @@ while run:
         stenemies = []
         invisis = []
         soultotems = []
+        flyingens = []
         text = tutorialfont.render('escape',True,(255,0,0),(255,255,255))
         screen.blit(text,(900,200))
         pygame.draw.rect(screen,(200,0,0),timebar,time)
@@ -823,6 +834,7 @@ while run:
             projectiles = []
             projectileenemies = []
             invisis = [bsoultotem]
+            flyingens = []
         boss = 1
         pygame.draw.rect(screen,(200,0,0),bhealthbar,round(beelzlbub.health))
         bhealthbar.width = round(beelzlbub.health)
@@ -951,6 +963,7 @@ while run:
             reapups = [ml2secret4]
             jumpups = [ml2secret5]
             soultotems = [ml2_soultotem]
+            flyingens = [ml2flenemy1,ml2flenemy2,ml2flenemy3,ml2flenemy4,ml2flenemy5]
         if md == 1:
             for amoplat in aps:
                 amoplat.move_ip(0,-0.5)
@@ -974,6 +987,7 @@ while run:
             objects = [l2bfloort,l2bbwall,l2bfwall,l2bceil]
             noncols = [atropos,lachesis,clotho]
             invisis = [b2soultotem]
+            flyingens = []
             stunint == False
         pygame.draw.rect(screen,(200,0,0),bhealthbar)
         bhealthbar.width = (clotho.health + lachesis.health + atropos.health)
@@ -1146,6 +1160,7 @@ while run:
             prsponds = []
             invisis = [blockwall]
             soultotems = [ml3soultotem]
+            flyingens = [ml3flenemy1,ml3flenemy2]
         if (player.x > ml3floort3.x and player.y > ml3floort3.y - 100 and player.x < ml3floort3.x + 1000 and lostsoul_beaten == False) or lost_fight == True:
             if not blockwall in objects:
                 objects.append(blockwall)
@@ -1310,6 +1325,7 @@ while run:
             jumpups = []
             invisis = []
             prsponds = [chl_ptarget1,chl_ptarget2,chl_ptarget3]
+            flyingens = []
         text = tutorialfont.render('shoot the red targets',True,(0,0,0),(255,255,255))
         screen.blit(text,(900,200))
         pygame.draw.rect(screen,(200,0,0),timebar,time)
@@ -1356,6 +1372,7 @@ while run:
             invisis = [b3soultotem]
             soultotems = []
             prsponds = []
+            flyingens = []
             atchoice = 0
         if death.health > 3000:
             pygame.draw.rect(screen,(200,0,100),death)
@@ -2238,7 +2255,22 @@ while run:
                 afen.animate_step += 1
             if afen.colliderect(player):
                 soul-=0.3
-            
+            if not (afen.colliderect(slash) and slash.hidden == False):
+                if afen.ensxm>0:
+                    afen.ensxm-=0.1
+                elif afen.ensxm<0:
+                    afen.ensxm+=0.1
+                if afen.ensxm < 0.1 and afen.ensxm > -0.1:
+                    afen.ensxm = 0
+                afen.move_ip(afen.ensxm,0)
+                for awall in objects:
+                    if not afen.colliderect(awall):
+                        afen.wallcollidecheck += 1
+                if afen.wallcollidecheck < len(objects):
+                    afen.move_ip(afen.ensxm * -0.5,0)
+                    afen.ensxm = 0
+                afen.wallcollidecheck = 0
+
                 
 
     for adma in dmable:
