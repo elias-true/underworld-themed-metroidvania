@@ -104,9 +104,11 @@ eq4f = False
 eq3f = False
 intcool = 0
 rncad = 0
+atstyle = 0
 ft = 1
 sch1eqa = 0
 projss = 0
+a2choice = 0
 eqmo = False
 ft0 = 1
 ft1 = 1
@@ -488,7 +490,7 @@ chl_ptarget3 = movable(1700,400,100,150)
 ml2_soultotem = movable(10800,950,50,100)
 soultotem = movable(5800,-400,50,100)
 bsoultotem = movable(1000,950,50,100)
-ml3soultotem = movable(2300,-2000,50,100)
+ml3soultotem = movable(2300,-2100,50,100)
 b3floort = movable(0,1000,10000,50)
 b3bwall = movable(0,0,50,1000)
 b3ceil = movable(0,0,50,10000)
@@ -498,6 +500,7 @@ death = movable(100,850,40,150)
 b3soultotem = movable(200,950,50,100)
 b2soultotem = movable(200,950,50,100)
 flyingenemy = movable(1600,500,32,32)
+
 
 objects = []
 enemies = []
@@ -1347,7 +1350,6 @@ while run:
             eq5f = True
             level = 6
     elif level == 8:
-        level = 9
         if not b3floort in objects:
             objects = [b3floort,b3bwall,b3ceil,b3fwall1,b3fwall2]
             enemies = []
@@ -1376,136 +1378,155 @@ while run:
             atchoice = 0
         if death.health > 3000:
             pygame.draw.rect(screen,(200,0,100),death)
-            if death.centerx>player.left and atchoice == 0:
-                death.move_ip(-0.5,0)
-                for awall in objects:
-                    if death.colliderect(awall):
-                        death.move_ip(1,0)
-            elif death.centerx<player.left and atchoice == 0:
-                death.move_ip(0.5,0)
-                for awall in objects:
-                    if death.colliderect(awall):
-                        death.move_ip(-1,0)
-            if player.centerx > death.centerx -200 and player.centerx < death.centerx + 200 and death.cooldown < 1 and atchoice == 0:
-                death.ymom = -10
-                death.cooldoown = 2500
-                atchoice = 1
-            elif atchoice == 1:
-                death.move_ip(0,death.ymom)
-                if death.ymom>0:
-                    death.ymom-=0.05
-                else:
-                    death.ymom+=0.05
-                if death.colliderect(player):
-                    soul-=1
-                if death.ymom > -0.1 and death.ymom < 0.1:
-                    death.ymom = 0
-                if death.ymom == 0:
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = -2
-                        projectiles[len(projectiles) - 1].ymom = 0
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = -1.8
-                        projectiles[len(projectiles) - 1].ymom = 0.2
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = -1.6
-                        projectiles[len(projectiles) - 1].ymom = 0.4
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = -1.4
-                        projectiles[len(projectiles) - 1].ymom = 0.6
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = -1.2
-                        projectiles[len(projectiles) - 1].ymom = 0.8
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = -1
-                        projectiles[len(projectiles) - 1].ymom = 1
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = -0.8
-                        projectiles[len(projectiles) - 1].ymom = 1.2
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = -0.6
-                        projectiles[len(projectiles) - 1].ymom = 1.4
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = -0.4
-                        projectiles[len(projectiles) - 1].ymom = 1.6
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = -0.2
-                        projectiles[len(projectiles) - 1].ymom = 1.8
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = 0
-                        projectiles[len(projectiles) - 1].ymom = 2
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = 0.2
-                        projectiles[len(projectiles) - 1].ymom = 1.8
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = 0.4
-                        projectiles[len(projectiles) - 1].ymom = 1.6
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = 0.6
-                        projectiles[len(projectiles) - 1].ymom = 1.4
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = 0.8
-                        projectiles[len(projectiles) - 1].ymom = 1.2
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = 1
-                        projectiles[len(projectiles) - 1].ymom = 1
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = 1.2
-                        projectiles[len(projectiles) - 1].ymom = 0.8
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = 1.4
-                        projectiles[len(projectiles) - 1].ymom = 0.6
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = 1.6
-                        projectiles[len(projectiles) - 1].ymom = 0.4
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = 1.8
-                        projectiles[len(projectiles) - 1].ymom = 0.2
-                        deathproj = movable(death.centerx,death.centery+70,10,10)
-                        projectiles.append(deathproj)
-                        projectiles[len(projectiles) - 1].pdammage = 50
-                        projectiles[len(projectiles) - 1].ensxm = 2
-                        projectiles[len(projectiles) - 1].ymom = 0
+            if ((player.x>death.x+300) and (player.x<death.x + 900)) or ((player.x<death.x - 300) and (player.x>death.x - 900)):
+                atstyle = 2
+            elif (player.x<death.x+300) and (player.x>death.x - 300):
+                atstyle = 1
+            else:
+                atsyle = 3
+            if death.cooldown<1:
+                if atstyle == 2:
+                    a2choice = random.randint(1,3)
+                elif atstyle == 3:
+                    a2choice = random.randint(3,7)
+                elif atstyle == 1:
+                    a2choice = random.randint(8,9)
+                if a2choice == 8 and death.cooldown<1:
+                    if player.x < death.centerx:
+                        attack = movable(death.x - 150,death.y + 40,150,5)
+                        enatcks.append(attack)
+                    else:
+                        attack = movable(death.x + 150,death.y + 40,150,5)
+                        enatcks.append(attack)
+                    enatcks[len(enatcks) - 1].slashlife = 90
+                    death.cooldown = 600
+                elif a2choice == 9:
+                    if death.coriographs < 1:
+                        death.coriographs = 200
+                    elif death.cooldown < 1:
+                        sigpart = movable(death.x + random.randint(-300,300), death.y + random.randint(-300,300), 5, 5)
+                        projectiles.append(sigpart)
+                        projectiles[len(projectiles) - 1].pdammage = 0
+                        projectiles[len(projectiles) - 1].ppt = True
+                        projectiles[len(projectiles) - 1].ensxm = ((death.centerx-projectiles[len(projectiles) - 1].centerx)/math.sqrt((death.centerx-projectiles[len(projectiles) - 1].centerx)**2+(death.centery-projectiles[len(projectiles) - 1].centery)**2))
+                        projectiles[len(projectiles) - 1].ymom = ((death.centery-projectiles[len(projectiles) - 1].centery)/math.sqrt((death.centerx-projectiles[len(projectiles) - 1].centerx)**2+(death.centery-projectiles[len(projectiles) - 1].centery)**2))
+                        lostsoul.coriographs-=1
+                        lostsoul.cooldown = 3
+                        if death.coriographs < 1:
+                            death.cooldown = 1000
+                            if player.x < death.x + 700 and player.x > death.x - 700 + player.y < death.y + 700 and player.y > death.y - 700:
+                                soul-=150 * benemdm
+                                a2choice = 0
+                            else:
+                                a2choice = 0
+                if death.cooldown>0:
+                    death.cooldown-=1
+        #       this was supposed tobe the third attack but I need to fix it
+        #                        deathproj = movable(death.centerx,death.centery+100,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = -2
+        #                        projectiles[len(projectiles) - 1].ymom = 0
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = -1.8
+        #                        projectiles[len(projectiles) - 1].ymom = 0.2
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = -1.6
+        #                        projectiles[len(projectiles) - 1].ymom = 0.4
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = -1.4
+        #                        projectiles[len(projectiles) - 1].ymom = 0.6
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = -1.2
+        #                        projectiles[len(projectiles) - 1].ymom = 0.8
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = -1
+        #                        projectiles[len(projectiles) - 1].ymom = 1
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = -0.8
+        #                        projectiles[len(projectiles) - 1].ymom = 1.2
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = -0.6
+        #                        projectiles[len(projectiles) - 1].ymom = 1.4
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = -0.4
+        #                        projectiles[len(projectiles) - 1].ymom = 1.6
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = -0.2
+        #                        projectiles[len(projectiles) - 1].ymom = 1.8
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = 0
+        #                        projectiles[len(projectiles) - 1].ymom = 2
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = 0.2
+        #                        projectiles[len(projectiles) - 1].ymom = 1.8
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = 0.4
+        #                        projectiles[len(projectiles) - 1].ymom = 1.6
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = 0.6
+        #                        projectiles[len(projectiles) - 1].ymom = 1.4
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = 0.8
+        #                        projectiles[len(projectiles) - 1].ymom = 1.2
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = 1
+        #                        projectiles[len(projectiles) - 1].ymom = 1
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = 1.2
+        #                        projectiles[len(projectiles) - 1].ymom = 0.8
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = 1.4
+        #                        projectiles[len(projectiles) - 1].ymom = 0.6
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = 1.6
+        #                        projectiles[len(projectiles) - 1].ymom = 0.4
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = 1.8
+        #                        projectiles[len(projectiles) - 1].ymom = 0.2
+        #                        deathproj = movable(death.centerx,death.centery+70,10,10)
+        #                        projectiles.append(deathproj)
+        #                        projectiles[len(projectiles) - 1].pdammage = 50
+        #                        projectiles[len(projectiles) - 1].ensxm = 2
+        #                        projectiles[len(projectiles) - 1].ymom = 0
     elif level == 9:
         screen.fill((0,0,0))
         text = bossfont.render('a game by elias true schoenfelder watson',True,(255,255,255),(0,0,0))
