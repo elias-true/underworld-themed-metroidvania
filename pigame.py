@@ -191,7 +191,7 @@ while level < -1 and run == True:
                 screen.blit(text,(1500,400))
             text = bossfont.render('options',True,(0,0,0),(255,255,255))
             screen.blit(text,(1500,600))
-            if key[pygame.K_KP_ENTER] == True and dp < 1:
+            if key[pygame.K_RETURN] == True and dp < 1:
                 level = -3
                 dp = 200
         else:
@@ -203,7 +203,7 @@ while level < -1 and run == True:
                 screen.blit(text,(1500,600))
             text = bossfont.render('play',True,(0,0,0),(255,255,255))
             screen.blit(text,(1500,400))
-            if key[pygame.K_KP_ENTER] == True and dp < 1:
+            if key[pygame.K_RETURN] == True and dp < 1:
                 level = -2
                 selecting = 1
                 dp = 200
@@ -219,7 +219,7 @@ while level < -1 and run == True:
                 screen.blit(text,(1500,400))
             text = bossfont.render('hard',True,(0,0,0),(255,255,255))
             screen.blit(text,(1500,600))
-            if key[pygame.K_KP_ENTER] == True and dp < 1:
+            if key[pygame.K_RETURN] == True and dp < 1:
                 level = -1
                 difficulty = 1
                 dp = 200
@@ -232,7 +232,7 @@ while level < -1 and run == True:
                 screen.blit(text,(1500,600))
             text = bossfont.render('easy',True,(0,0,0),(255,255,255))
             screen.blit(text,(1500,400))
-            if key[pygame.K_KP_ENTER] == True and dp < 1:
+            if key[pygame.K_RETURN] == True and dp < 1:
                 level = -1
                 difficulty = 2
                 dp = 200
@@ -670,6 +670,8 @@ while run:
             if ftc < 1:
                 ft0 += 1
                 ftc = 11
+                if key[pygame.K_w] == True:
+                    ft0 += 10
         else:
             if ft < 255:    
                 text = tutorialfont.render('luckily for you, however, my power is such that I may let you out, in extchange for some help down the road of course',True,(ft,ft,ft),(255,255,255))
@@ -677,6 +679,8 @@ while run:
                 if ftc < 1:
                     ft += 1
                     ftc = 14
+                    if key[pygame.K_w] == True:
+                        ft += 10
             else:
                 text = tutorialfont.render('w to accept help',True,(0,0,0),(255,255,255))
                 screen.blit(text,(800,200))
