@@ -91,7 +91,7 @@ dash = 12
 b2b = 0
 platpc = 0
 ftc = 0
-level = 8
+level = -4
 lives = 10
 sgadd = 0
 facing = 0
@@ -502,11 +502,12 @@ ml2_soultotem = movable(10800,950,50,100)
 soultotem = movable(5800,-400,50,100)
 bsoultotem = movable(1000,950,50,100)
 ml3soultotem = movable(2300,-2150,50,100)
-b3floort = movable(0,1000,10000,50)
+b3floort = movable(0,1000,20100,50)
 b3bwall = movable(0,0,50,1000)
-b3ceil = movable(0,0,50,10000)
+b3ceil = movable(0,0,50,20100)
 b3fwall1 = movable(1800,0,50,1000)
-b3fwall2 = movable(10000,0,50,1000)
+b3fwall2 = movable(20100,-1000,50,2000)
+b3deathwall = movable(0,-1000,50,2000)
 death = movable(100,850,40,150)
 b3soultotem = movable(200,950,50,100)
 b2soultotem = movable(200,950,50,100)
@@ -594,7 +595,7 @@ while run:
         resetlevel(objects)
 
     dmable = spenemies + senemies + projectileenemies + enemies + stenemies + bosses + flyingens
-    mable = objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies+stenemies+invisis+soultotems+flyingens 
+    mable = objects+enemies+noncols+projectileenemies+projectiles+enatcks+fatcks+senemies+spenemies+stenemies+invisis+soultotems+flyingens
 #    if eq5a == 1 and not projectiles in dmable:
 #        dmable.append(projectiles)
 #    elif projectiles in dmable:
@@ -1390,6 +1391,10 @@ while run:
             soultotems = []
             prsponds = []
             flyingens = []
+        pygame.draw.rect(screen,(200,0,0),bhealthbar,round(death.health))
+        bhealthbar.width = round(death.health/5)
+        text = bossfont.render("Death the inevitable",True,(255,100,100),(255,255,255))
+        screen.blit(text,(400,0))
         if death.health > 2000:
             pygame.draw.rect(screen,(200,0,100),death)
             if ((player.x>death.x+300) and (player.x<death.x + 900)) or ((player.x<death.x - 300) and (player.x>death.x - 900)):
@@ -1441,6 +1446,7 @@ while run:
                                 a2choice = 0
                 elif a2choice == 4:
                     if death.coriographs == 0:
+                        death.move_ip(0,-2)
                         death.coriographs = 100
                     elif death.cooldown < 1:
                         if death.coriographs > 0:
@@ -1589,7 +1595,7 @@ while run:
                     a2choice = 0
             if colt(death) == False:
                 death.move_ip(0,1)
-            else:
+            else: 
                 death.move_ip(0,-2)
             dcount=0
             for anobject in objects:
@@ -1609,14 +1615,95 @@ while run:
                 death.ensxm = 0
             if death.cooldown>0:
                 death.cooldown-=1
+        elif death.health > 0:
+            if not bosspoisonfloort in noncols:
+                objects = [b3floort,b3bwall,b3ceil,b3fwall2]
+                noncols = [death,b3deathwall,bosspoisonfloort]
+            bosspoisonfloort.move(b3floort.x,b3floort.y - 30)
+            bosspoisonfloort.width = 20100
+            if platpc < 1:
+                deathproj = movable(1800,random.randint(b3ceil.y,b3ceil.y + 900),20,20)
+                projectiles.append(deathproj)
+                projectiles[len(projectiles) - 1].pdammage = 50
+                projectiles[len(projectiles) - 1].ensxm = -2
+                projectiles[len(projectiles) - 1].ymom = 0
+                deathproj = movable(1800,random.randint(b3ceil.y,b3ceil.y + 900),20,20)
+                projectiles.append(deathproj)
+                projectiles[len(projectiles) - 1].pdammage = 50
+                projectiles[len(projectiles) - 1].ensxm = -2
+                projectiles[len(projectiles) - 1].ymom = 0
+                deathproj = movable(1800,random.randint(b3ceil.y,b3ceil.y + 900),20,20)
+                projectiles.append(deathproj)
+                projectiles[len(projectiles) - 1].pdammage = 50
+                projectiles[len(projectiles) - 1].ensxm = -2
+                projectiles[len(projectiles) - 1].ymom = 0
+                platchoice = random.randint(1,2)
+                beelzplat = movable(1800,b3ceil.y + 400,150,50)
+                aps.append(beelzplat)
+                if platchoice == 1:
+                    objects.append(aps[len(aps) - 1])
+                else:
+                    noncols.append(aps[len(aps) - 1])
+                beelzplatp2 = movable(1800,b3ceil.y + 800,150,50)
+                aps.append(beelzplatp2)
+                if platchoice == 2:
+                    objects.append(aps[len(aps) - 1])
+                else:
+                    noncols.append(aps[len(aps) - 1])
+                platpc = 600
+            elif random.randint(1,800) == 1:
+                deathproj = movable(1800,random.randint(b3ceil.y,b3ceil.y + 900),20,20)
+                projectiles.append(deathproj)
+                projectiles[len(projectiles) - 1].pdammage = 50
+                projectiles[len(projectiles) - 1].ensxm = -2
+                projectiles[len(projectiles) - 1].ymom = 0
+                deathproj = movable(1800,random.randint(b3ceil.y,b3ceil.y + 900),20,20)
+                projectiles.append(deathproj)
+                projectiles[len(projectiles) - 1].pdammage = 50
+                projectiles[len(projectiles) - 1].ensxm = -2
+                projectiles[len(projectiles) - 1].ymom = 0
+                deathproj = movable(1800,random.randint(b3ceil.y,b3ceil.y + 900),20,20)
+                projectiles.append(deathproj)
+                projectiles[len(projectiles) - 1].pdammage = 50
+                projectiles[len(projectiles) - 1].ensxm = -2
+                projectiles[len(projectiles) - 1].ymom = 0
+            for abplat in aps:
+                if abplat.x < 0:
+                    aps.remove(abplat)
+                    if abplat in objects:
+                        objects.remove(abplat)
+                    else:
+                        noncols.remove(abplat)
+            if ascrollc < 1:
+                death.health-=1
+                ascrollc = 5
+            else:
+                ascrollc-=1
+            b3deathwall.width+=2
+            if player.colliderect(bosspoisonfloort):
+                if poisonc < 1:
+                    soul-=80
+                    ymom = -13
+                    poisonc = 50
+            else:
+                poisonc-=1
+            if player.colliderect(b3deathwall):
+                if poisonc < 1:
+                    soul-=80
+                    xmom = -13
+                    poisonc = 50
+            else:
+                poisonc-=1
+        else:
+            level = 9
                                 
     elif level == 9:
         screen.fill((0,0,0))
         text = bossfont.render('a game by elias true schoenfelder watson',True,(255,255,255),(0,0,0))
         screen.blit(text,(200,200))
-        text = tutorialfont.render('enemy and wall art by reuben haugen',True,(255,255,255),(0,0,0))
+        text = tutorialfont.render('enemy art by reuben haugen',True,(255,255,255),(0,0,0))
         screen.blit(text,(200,450))
-        text = tutorialfont.render('player art by illiana',True,(255,255,255),(0,0,0))
+        text = tutorialfont.render('player art by illiana (unknown last name)',True,(255,255,255),(0,0,0))
         screen.blit(text,(200,700))
         text = tutorialfont.render('notable story assistance provided by colin bannen and will severtson',True,(255,255,255),(0,0,0))
         screen.blit(text,(200,800))
@@ -1666,6 +1753,7 @@ while run:
     
 
     def moveObjsX(objectsList,x):
+        global platpc
         l=0
         while l < len(objectsList):
             objectsList[l].move_ip(x,0)
@@ -1675,6 +1763,8 @@ while run:
             while l < len(objectsList):
                 objectsList[l].move_ip(-1.4*x,0)
                 l+=1
+        if level == 8:
+            platpc+=x
 
     if interacting == False and interact2ing == False:
         if key[pygame.K_a] == True and not key[pygame.K_s] == True:
