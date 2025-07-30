@@ -247,9 +247,9 @@ while run:
     if aiformebest.health < 1 or aichalenger.health < 1 or tickcount<1:
         generations+=1
         tickcount = 8000
-        projectiles = []
+        projectiles.clear()
 
-        the_ai_list.sort( key=(lambda some_ai : some_ai.health) , reverse=True )
+        the_ai_list.sort( key=(lambda some_ai : some_ai.health), reverse=True )
 
         for index in range(1,len(the_ai_list)):
             the_ai_list[index].copy_neurons(the_ai_list[0])
@@ -267,7 +267,7 @@ while run:
     
 
     screen.fill((200,200,200))
-    key = pygame.key.get_pressed()
+    #key = pygame.key.get_pressed()
     pygame.draw.rect(screen,(0,100,0),aiformebest)
     pygame.draw.rect(screen,(100,0,0),aichalenger)
     for aproj in projectiles:
@@ -293,7 +293,7 @@ while run:
             for anai in the_ai_list:
                 if aproj.colliderect(anai) and not anai == aproj.shooter:
                     anai.move_ip(aproj.xmomentum*50,0)
-                    anai.health -= 0
+                    anai.health -= 20
                     rems.append(aproj)
         else:
             rems.append(aproj)
@@ -311,7 +311,9 @@ while run:
     
     
     for anai in the_ai_list:
-        anai.move_toward_goal(projectiles + the_ai_list)
+        #TODO:  Create a list of "relative positions" for the current AI and pass that in as the "goals"
+        #TODO:  Maybe add an attribute to the movables class to say whether they are "good" or "bad".  Then the AI could learn to go toward good things and avoid bad ones.
+        anai.move_toward_goal(the_ai_list + projectiles)
         if anai.shootcooldown < 1:
             anai.shoot_toward(the_ai_list)
             anai.shootcooldown = 200
@@ -319,6 +321,7 @@ while run:
 
    
     for anai in the_ai_list:
+        anai.shootcooldown -= 1
         anai.move_ip(0,anai.ymomentum)
         if anai.x<0 or anai.x>1500 or anai.y<0 or anai.y>800:
             anai.health-=50
@@ -333,7 +336,6 @@ while run:
 
             
     
-
     tickcount-=1
 
     for event in pygame.event.get():
